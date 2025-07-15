@@ -1,4 +1,4 @@
-import { getErrorMessage } from '../utils/error-handler.js';
+import { getErrorMessage as _getErrorMessage } from '../utils/error-handler.js';
 /**
  * MCP (Model Context Protocol) server implementation
  */

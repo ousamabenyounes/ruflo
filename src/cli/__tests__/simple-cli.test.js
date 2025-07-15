@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 /**
  * Tests for simple-cli.js
  */

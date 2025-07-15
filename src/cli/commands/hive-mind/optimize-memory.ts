@@ -125,7 +125,7 @@ async function analyzeMemoryPerformance(): Promise<void> {
     }
 
     if (healthCheck.recommendations.length > 0) {
-      console.log(`   Recommendations:`);
+      console.log('   Recommendations:');
       healthCheck.recommendations.forEach(rec => {
         console.log(`     • ${chalk.blue(rec)}`);
       });
@@ -402,10 +402,10 @@ async function performMemoryCleanup(): Promise<void> {
     console.log(chalk.blue('4. Analyzing patterns...'));
     const patterns = await memory.learnPatterns();
 
-    console.log(chalk.green(`✅ Cleanup completed!`));
+    console.log(chalk.green('✅ Cleanup completed!'));
     console.log(`   • Learned ${patterns.length} patterns`);
-    console.log(`   • Cache optimized`);
-    console.log(`   • Memory compressed\n`);
+    console.log('   • Cache optimized');
+    console.log('   • Memory compressed\n');
 
     await memory.shutdown();
 

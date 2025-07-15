@@ -1,3 +1,5 @@
+/* global Deno */
+
 /**
  * Runtime Environment Detection
  * Cross-platform detection and compatibility layer for Node.js and Deno

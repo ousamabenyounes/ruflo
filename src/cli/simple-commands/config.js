@@ -51,12 +51,12 @@ async function initConfig(subArgs, flags) {
     
     // Create default configuration
     const defaultConfig = {
-      version: "1.0.71",
+      version: '1.0.71',
       terminal: {
         poolSize: 10,
         recycleAfter: 20,
         healthCheckInterval: 30000,
-        type: "auto"
+        type: 'auto'
       },
       orchestrator: {
         maxConcurrentTasks: 10,
@@ -64,28 +64,28 @@ async function initConfig(subArgs, flags) {
         defaultPriority: 5
       },
       memory: {
-        backend: "json",
-        path: "./memory/claude-flow-data.json",
+        backend: 'json',
+        path: './memory/claude-flow-data.json',
         cacheSize: 1000,
         indexing: true
       },
       agents: {
         maxAgents: 20,
-        defaultCapabilities: ["research", "code", "terminal"],
+        defaultCapabilities: ['research', 'code', 'terminal'],
         resourceLimits: {
-          memory: "1GB",
-          cpu: "50%"
+          memory: '1GB',
+          cpu: '50%'
         }
       },
       mcp: {
         port: 3000,
-        host: "localhost",
+        host: 'localhost',
         timeout: 30000
       },
       logging: {
-        level: "info",
-        file: "./claude-flow.log",
-        maxSize: "10MB",
+        level: 'info',
+        file: './claude-flow.log',
+        maxSize: '10MB',
         maxFiles: 5
       }
     };

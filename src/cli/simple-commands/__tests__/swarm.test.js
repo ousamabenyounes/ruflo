@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 /**
  * Tests for swarm command
  */

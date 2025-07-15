@@ -98,7 +98,7 @@ export class ClaudeCodeWebServer {
       });
 
       this.isRunning = true;
-      printSuccess(`🌐 Claude Code Web UI started successfully`);
+      printSuccess('🌐 Claude Code Web UI started successfully');
       console.log(`📍 Web Interface: http://localhost:${this.port}/console`);
       console.log(`🔗 WebSocket: ws://localhost:${this.port}/ws`);
       console.log(`📁 Serving UI from: ${this.uiPath}`);
@@ -758,7 +758,7 @@ export class ClaudeCodeWebServer {
         return `Memory retrieved:\n  Key: ${key}\n  Value: "example stored value"\n  Last Modified: ${new Date().toISOString()}`;
       
       case 'list':
-        return `Memory Keys:\n  • project/settings\n  • swarm/topology\n  • agents/coordination\n  • session/state\n  • benchmark/results\n  \n  Total: 5 entries`;
+        return 'Memory Keys:\n  • project/settings\n  • swarm/topology\n  • agents/coordination\n  • session/state\n  • benchmark/results\n  \n  Total: 5 entries';
       
       case 'delete':
         return `Memory deleted:\n  Key: ${key}\n  Status: Success`;
@@ -774,7 +774,7 @@ export class ClaudeCodeWebServer {
   executeAgentsCommand(action, agentType, agentId) {
     switch (action) {
       case 'list':
-        return `Active Agents:\n  🟢 agent-001 (architect) - Designing system components\n  🟢 agent-002 (coder) - Implementing features\n  🟡 agent-003 (analyst) - Analyzing performance\n  🔴 agent-004 (tester) - Waiting for code\n  🟢 agent-005 (coordinator) - Managing workflow\n  \n  Total: 5 agents`;
+        return 'Active Agents:\n  🟢 agent-001 (architect) - Designing system components\n  🟢 agent-002 (coder) - Implementing features\n  🟡 agent-003 (analyst) - Analyzing performance\n  🔴 agent-004 (tester) - Waiting for code\n  🟢 agent-005 (coordinator) - Managing workflow\n  \n  Total: 5 agents';
       
       case 'create':
         return `Agent created successfully:\n  Type: ${agentType}\n  ID: agent-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}\n  Status: Active\n  Capabilities: Full ${agentType} functionality`;

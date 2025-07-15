@@ -322,7 +322,7 @@ export class EventBus {
 
       return result;
     } catch (error) {
-      console.error(`📡 EventBus: Error in async handler:`, error);
+      console.error('📡 EventBus: Error in async handler:', error);
       throw error;
     }
   }

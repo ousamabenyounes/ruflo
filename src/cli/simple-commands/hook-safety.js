@@ -176,7 +176,7 @@ export class HookCommandValidator {
     if (this.isDangerousPattern(command, hookType)) {
       warnings.push({
         type: 'DANGEROUS_PATTERN',
-        message: `⚠️  WARNING: Potentially dangerous hook pattern detected.\n` +
+        message: '⚠️  WARNING: Potentially dangerous hook pattern detected.\n' +
                 'Review the command and consider safer alternatives.'
       });
     }
@@ -227,11 +227,11 @@ export class HookCircuitBreaker {
     // Stop hook protection - maximum 2 executions per session
     if (hookType === 'Stop' && executionCount > HOOK_SAFETY_CONFIG.MAX_STOP_HOOK_EXECUTIONS) {
       throw new Error(
-        `🚨 CIRCUIT BREAKER ACTIVATED!\n` +
+        '🚨 CIRCUIT BREAKER ACTIVATED!\n' +
         `Stop hook has executed ${executionCount} times in this session.\n` +
-        `This indicates a potential infinite loop that could cost thousands of dollars.\n` +
-        `Execution blocked for financial protection.\n\n` +
-        `To reset: Use --reset-circuit-breaker flag or restart your session.`
+        'This indicates a potential infinite loop that could cost thousands of dollars.\n' +
+        'Execution blocked for financial protection.\n\n' +
+        'To reset: Use --reset-circuit-breaker flag or restart your session.'
       );
     }
     
@@ -239,8 +239,8 @@ export class HookCircuitBreaker {
     if (executionCount > 20) {
       throw new Error(
         `🚨 CIRCUIT BREAKER: ${hookType} hook executed ${executionCount} times!\n` +
-        `This is highly unusual and indicates a potential problem.\n` +
-        `Execution blocked to prevent system overload.`
+        'This is highly unusual and indicates a potential problem.\n' +
+        'Execution blocked to prevent system overload.'
       );
     }
     

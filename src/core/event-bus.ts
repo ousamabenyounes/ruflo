@@ -1,4 +1,4 @@
-import { getErrorMessage } from '../utils/error-handler.js';
+import { getErrorMessage as _getErrorMessage } from '../utils/error-handler.js';
 /**
  * Event bus implementation for Claude-Flow
  */

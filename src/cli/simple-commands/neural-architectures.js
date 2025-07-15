@@ -13,7 +13,7 @@ import {
   configureWASMOptimization,
   runNeuralInference,
   predictWithNeuralModel
-} from "../utils.js";
+} from '../utils.js';
 
 export async function neuralArchitecturesAction(subArgs, flags) {
   const subcommand = subArgs[0];
@@ -78,8 +78,8 @@ async function transformerCommand(args, flags) {
     dataSource = 'recent'
   } = flags;
 
-  console.log(`🔧 Training Transformer Neural Network\n`);
-  console.log(`📋 Configuration:`);
+  console.log('🔧 Training Transformer Neural Network\n');
+  console.log('📋 Configuration:');
   console.log(`   Model Name: ${modelName}`);
   console.log(`   Input Dimensions: ${inputDim}`);
   console.log(`   Attention Heads: ${heads}`);
@@ -98,7 +98,7 @@ async function transformerCommand(args, flags) {
     });
 
     if (result.success) {
-      printSuccess(`✅ Transformer training completed successfully!`);
+      printSuccess('✅ Transformer training completed successfully!');
       console.log(`🤖 Model ID: ${result.modelId}`);
       console.log(`📈 Architecture: Transformer (${heads} heads, ${layers} layers)`);
       console.log(`🎯 Final Accuracy: ${(result.accuracy * 100).toFixed(1)}%`);
@@ -129,8 +129,8 @@ async function lstmCommand(args, flags) {
     dataSource = 'recent'
   } = flags;
 
-  console.log(`🔧 Training LSTM Neural Network\n`);
-  console.log(`📋 Configuration:`);
+  console.log('🔧 Training LSTM Neural Network\n');
+  console.log('📋 Configuration:');
   console.log(`   Model Name: ${modelName}`);
   console.log(`   Hidden Size: ${hiddenSize}`);
   console.log(`   Number of Layers: ${numLayers}`);
@@ -149,7 +149,7 @@ async function lstmCommand(args, flags) {
     });
 
     if (result.success) {
-      printSuccess(`✅ LSTM training completed successfully!`);
+      printSuccess('✅ LSTM training completed successfully!');
       console.log(`🤖 Model ID: ${result.modelId}`);
       console.log(`📈 Architecture: LSTM (${hiddenSize} units, ${numLayers} layers)`);
       console.log(`🎯 Final Accuracy: ${(result.accuracy * 100).toFixed(1)}%`);
@@ -183,8 +183,8 @@ async function cnnCommand(args, flags) {
   const inputShapeArray = inputShape.split(',').map(n => parseInt(n));
   const filtersArray = filters.split(',').map(n => parseInt(n));
 
-  console.log(`🔧 Training CNN Neural Network\n`);
-  console.log(`📋 Configuration:`);
+  console.log('🔧 Training CNN Neural Network\n');
+  console.log('📋 Configuration:');
   console.log(`   Model Name: ${modelName}`);
   console.log(`   Input Shape: [${inputShapeArray.join(', ')}]`);
   console.log(`   Filters: [${filtersArray.join(', ')}]`);
@@ -203,7 +203,7 @@ async function cnnCommand(args, flags) {
     });
 
     if (result.success) {
-      printSuccess(`✅ CNN training completed successfully!`);
+      printSuccess('✅ CNN training completed successfully!');
       console.log(`🤖 Model ID: ${result.modelId}`);
       console.log(`📈 Architecture: CNN (${filtersArray.length} conv layers)`);
       console.log(`🎯 Final Accuracy: ${(result.accuracy * 100).toFixed(1)}%`);
@@ -234,8 +234,8 @@ async function attentionCommand(args, flags) {
     dataSource = 'recent'
   } = flags;
 
-  console.log(`🔧 Training Attention Neural Network\n`);
-  console.log(`📋 Configuration:`);
+  console.log('🔧 Training Attention Neural Network\n');
+  console.log('📋 Configuration:');
   console.log(`   Model Name: ${modelName}`);
   console.log(`   Attention Heads: ${attentionHeads}`);
   console.log(`   Dimensions: ${dimensions}`);
@@ -254,7 +254,7 @@ async function attentionCommand(args, flags) {
     });
 
     if (result.success) {
-      printSuccess(`✅ Attention mechanism training completed successfully!`);
+      printSuccess('✅ Attention mechanism training completed successfully!');
       console.log(`🤖 Model ID: ${result.modelId}`);
       console.log(`📈 Architecture: Attention (${attentionHeads} heads, ${dimensions}D)`);
       console.log(`🎯 Final Accuracy: ${(result.accuracy * 100).toFixed(1)}%`);
@@ -302,7 +302,7 @@ async function loadModelCommand(args, flags) {
   try {
     const result = await loadNeuralModel(path);
     if (result.success) {
-      printSuccess(`✅ Model loaded successfully`);
+      printSuccess('✅ Model loaded successfully');
       console.log(`🤖 Model ID: ${result.modelId}`);
       console.log(`📈 Type: ${result.modelType || 'Unknown'}`);
       console.log(`📊 Parameters: ${result.parameters || 'Unknown'}`);
@@ -367,9 +367,9 @@ async function predictCommand(args, flags) {
     const result = await predictWithNeuralModel(modelId, inputData);
     
     if (result.success) {
-      printSuccess(`✅ Neural prediction completed`);
+      printSuccess('✅ Neural prediction completed');
       console.log(`🤖 Model: ${modelId}`);
-      console.log(`📊 Prediction:`);
+      console.log('📊 Prediction:');
       console.log(`   • Outcome: ${result.prediction?.outcome || 'N/A'}`);
       console.log(`   • Confidence: ${result.prediction?.confidence ? (result.prediction.confidence * 100).toFixed(1) + '%' : 'N/A'}`);
       console.log(`   • Inference Time: ${result.inference_time_ms || 'N/A'}ms`);
@@ -389,8 +389,8 @@ async function wasmConfigCommand(args, flags) {
     gpu = 'false'
   } = flags;
 
-  console.log(`🔧 Configuring WASM Optimization\n`);
-  console.log(`📋 Settings:`);
+  console.log('🔧 Configuring WASM Optimization\n');
+  console.log('📋 Settings:');
   console.log(`   SIMD Enabled: ${simd}`);
   console.log(`   Parallel Processing: ${parallel}`);
   console.log(`   Memory Optimization: ${memory}`);
@@ -405,7 +405,7 @@ async function wasmConfigCommand(args, flags) {
     });
 
     if (result.success) {
-      printSuccess(`✅ WASM optimization configured successfully`);
+      printSuccess('✅ WASM optimization configured successfully');
     } else {
       printError(`WASM configuration failed: ${result.error}`);
     }

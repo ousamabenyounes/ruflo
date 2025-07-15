@@ -37,7 +37,7 @@ export async function hiveAction(ctx: CommandContext) {
 
   const objective = ctx.args.join(' ').trim();
   if (!objective) {
-    error("Usage: hive <objective> [options]");
+    error('Usage: hive <objective> [options]');
     showHiveHelp();
     return;
   }
@@ -58,7 +58,7 @@ export async function hiveAction(ctx: CommandContext) {
   const hiveId = generateId('hive');
   
   success(`🐝 Initializing Hive Mind: ${hiveId}`);
-  console.log(`👑 Queen Genesis coordinating...`);
+  console.log('👑 Queen Genesis coordinating...');
   console.log(`📋 Objective: ${objective}`);
   console.log(`🏗️ Topology: ${options.topology}`);
   console.log(`🗳️ Consensus: ${options.consensus}`);
@@ -122,7 +122,7 @@ export async function hiveAction(ctx: CommandContext) {
     if (!options.background) {
       // Show results
       const status = coordinator.getSwarmStatus();
-      console.log(`\n📊 Hive Mind Summary:`);
+      console.log('\n📊 Hive Mind Summary:');
       console.log(`  - Consensus Rounds: ${(status as any).customMetrics?.consensusRounds || 0}`);
       console.log(`  - Decisions Made: ${(status as any).customMetrics?.decisions || 0}`);
       console.log(`  - Tasks Completed: ${status.tasks.completed}`);
@@ -317,10 +317,10 @@ async function decomposeWithConsensus(
   // Queen proposes task decomposition
   const proposedTasks = [
     { type: 'analysis', description: `Analyze requirements for: ${objective}` },
-    { type: 'design', description: `Design solution architecture` },
-    { type: 'implementation', description: `Implement core functionality` },
-    { type: 'testing', description: `Test and validate solution` },
-    { type: 'documentation', description: `Document the implementation` }
+    { type: 'design', description: 'Design solution architecture' },
+    { type: 'implementation', description: 'Implement core functionality' },
+    { type: 'testing', description: 'Test and validate solution' },
+    { type: 'documentation', description: 'Document the implementation' }
   ];
   
   // Agents vote on task breakdown

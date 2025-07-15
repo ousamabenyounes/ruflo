@@ -218,11 +218,11 @@ async function runSparcMode(subArgs, flags) {
       
       const enablePermissions = subArgs.includes('--enable-permissions');
       if (!enablePermissions) {
-        console.log(`Tools: ALL (via --dangerously-skip-permissions)`);
-        console.log(`Permissions: Will be auto-skipped`);
+        console.log('Tools: ALL (via --dangerously-skip-permissions)');
+        console.log('Permissions: Will be auto-skipped');
       } else {
         console.log(`Tools: ${toolsList}`);
-        console.log(`Permissions: Will prompt for actions`);
+        console.log('Permissions: Will prompt for actions');
       }
       
       console.log(`Task: ${taskDescription}`);
@@ -240,16 +240,16 @@ async function runSparcMode(subArgs, flags) {
     const enablePermissions = subArgs.includes('--enable-permissions');
     
     if (!enablePermissions) {
-      console.log(`🔧 Tools: ALL (including MCP and WebSearch via --dangerously-skip-permissions)`);
-      console.log(`⚡ Permissions: Auto-skipped (--dangerously-skip-permissions)`);
+      console.log('🔧 Tools: ALL (including MCP and WebSearch via --dangerously-skip-permissions)');
+      console.log('⚡ Permissions: Auto-skipped (--dangerously-skip-permissions)');
     } else {
       console.log(`🔧 Tools: ${toolsList}`);
-      console.log(`✅ Permissions: Enabled (will prompt for actions)`);
+      console.log('✅ Permissions: Enabled (will prompt for actions)');
     }
-    console.log(`📋 Task: ${taskDescription}`)
+    console.log(`📋 Task: ${taskDescription}`);
     
     if (isNonInteractive) {
-      console.log(`🚀 Running in non-interactive mode with stream-json output`);
+      console.log('🚀 Running in non-interactive mode with stream-json output');
       console.log();
       
       // Show debug info immediately for non-interactive mode
@@ -396,7 +396,7 @@ async function executeClaude(enhancedTask, toolsList, instanceId, memoryNamespac
   try {
     // Log the actual command being executed
     console.log('\n🚀 Executing command:');
-    console.log(`Command: claude`);
+    console.log('Command: claude');
     console.log(`Working Directory: ${cwd()}`);
     console.log(`Number of args: ${claudeArgs.length}`);
     

@@ -102,7 +102,7 @@ export async function swarmCommand(args, flags) {
   const objective = (args || []).join(' ').trim();
   
   if (!objective) {
-    console.error("❌ Usage: swarm <objective>");
+    console.error('❌ Usage: swarm <objective>');
     showSwarmHelp();
     return;
   }
@@ -151,7 +151,7 @@ export async function swarmCommand(args, flags) {
       console.log(`🏗️  Mode: ${flags.mode || 'centralized'}`);
       console.log(`🤖 Max Agents: ${flags['max-agents'] || 5}`);
       if (isAnalysisMode) {
-        console.log(`🔍 Analysis Mode: ENABLED (Read-Only - No Code Changes)`);
+        console.log('🔍 Analysis Mode: ENABLED (Read-Only - No Code Changes)');
       }
       console.log();
       
@@ -604,7 +604,7 @@ The swarm should be self-documenting - use memory_store to save all important in
       // Create swarm directory
       await mkdirAsync(swarmRunDir, { recursive: true });
       
-      console.log(`🐝 Launching swarm in background mode...`);
+      console.log('🐝 Launching swarm in background mode...');
       console.log(`📋 Objective: ${objective}`);
       console.log(`🆔 Swarm ID: ${swarmId}`);
       console.log(`📁 Results: ${swarmRunDir}`);
@@ -688,7 +688,7 @@ await swarmCommand(args, flags);
         exit(0);
       } catch (error) {
         // Fallback: create a double-fork pattern using a shell script
-        console.log(`\n⚠️  Background script not found, using fallback method`);
+        console.log('\n⚠️  Background script not found, using fallback method');
         
         // Create a shell script that will run the swarm
         const shellScript = `#!/bin/bash
@@ -707,16 +707,16 @@ exit 0
         chmodSync(shellScriptPath, 0o755);
         
         // Execute the shell script
-        const shellProcess = spawn("bash", [shellScriptPath], {
+        const shellProcess = spawn('bash', [shellScriptPath], {
           stdio: 'ignore',
           detached: true
         });
         shellProcess.unref();
         
-        console.log(`\n✅ Swarm launched in background!`);
+        console.log('\n✅ Swarm launched in background!');
         console.log(`📄 Logs: tail -f ${logFile}`);
         console.log(`📊 Status: claude-flow swarm status ${swarmId}`);
-        console.log(`\nThe swarm will continue running independently.`);
+        console.log('\nThe swarm will continue running independently.');
         
         // Exit immediately
         exit(0);
@@ -756,10 +756,10 @@ exit 0
       }
     } else {
       // Fallback to simple message
-      console.log(`🐝 Background mode requested`);
+      console.log('🐝 Background mode requested');
       console.log(`📋 Objective: ${objective}`);
-      console.log(`\n⚠️  Background execution requires the claude-flow-swarm-bg script.`);
-      console.log(`\nFor true background execution, use:`)
+      console.log('\n⚠️  Background execution requires the claude-flow-swarm-bg script.');
+      console.log('\nFor true background execution, use:');
       console.log(`  nohup claude-flow swarm "${objective}" ${Object.entries(flags).filter(([k,v]) => k !== 'background' && v).map(([k,v]) => `--${k}${v !== true ? ` ${v}` : ''}`).join(' ')} > swarm.log 2>&1 &`);
     }
     return;
@@ -799,7 +799,7 @@ exit 0
       const objective = (args || []).join(' ').trim();
       
       if (!objective) {
-        console.error("❌ Usage: swarm <objective>");
+        console.error('❌ Usage: swarm <objective>');
         showSwarmHelp();
         return;
       }
@@ -1180,8 +1180,8 @@ async function createSwarmFiles(objective, flags) {
     const apiDir = path.join(targetDir, 'rest-api');
     await fs.promises.mkdir(apiDir, { recursive: true });
     
-    console.log(`\n🏗️  Creating REST API...`);
-    console.log(`  🤖 Agent developer-1: Creating server implementation`);
+    console.log('\n🏗️  Creating REST API...');
+    console.log('  🤖 Agent developer-1: Creating server implementation');
     
     // Create server.js
     const serverCode = `const express = require('express');
@@ -1241,29 +1241,29 @@ module.exports = app;
 `;
     
     await fs.promises.writeFile(path.join(apiDir, 'server.js'), serverCode);
-    console.log(`  ✅ Created: server.js`);
+    console.log('  ✅ Created: server.js');
     
     // Create package.json
     const packageJson = {
-      name: "rest-api",
-      version: "1.0.0",
-      description: "REST API created by Claude Flow Swarm",
-      main: "server.js",
+      name: 'rest-api',
+      version: '1.0.0',
+      description: 'REST API created by Claude Flow Swarm',
+      main: 'server.js',
       scripts: {
-        start: "node server.js",
-        dev: "nodemon server.js",
-        test: "jest"
+        start: 'node server.js',
+        dev: 'nodemon server.js',
+        test: 'jest'
       },
-      keywords: ["rest", "api", "swarm", "claude-flow"],
-      author: "Claude Flow Swarm",
-      license: "MIT",
+      keywords: ['rest', 'api', 'swarm', 'claude-flow'],
+      author: 'Claude Flow Swarm',
+      license: 'MIT',
       dependencies: {
-        express: "^4.18.2"
+        express: '^4.18.2'
       },
       devDependencies: {
-        nodemon: "^3.0.1",
-        jest: "^29.7.0",
-        supertest: "^6.3.3"
+        nodemon: '^3.0.1',
+        jest: '^29.7.0',
+        supertest: '^6.3.3'
       },
       swarmMetadata: {
         swarmId,
@@ -1276,7 +1276,7 @@ module.exports = app;
       path.join(apiDir, 'package.json'), 
       JSON.stringify(packageJson, null, 2)
     );
-    console.log(`  ✅ Created: package.json`);
+    console.log('  ✅ Created: package.json');
     
     // Create README
     const readme = `# REST API
@@ -1313,14 +1313,14 @@ Created by Claude Flow Swarm
 `;
     
     await fs.promises.writeFile(path.join(apiDir, 'README.md'), readme);
-    console.log(`  ✅ Created: README.md`);
+    console.log('  ✅ Created: README.md');
     
-    console.log(`\n✅ Swarm completed successfully!`);
+    console.log('\n✅ Swarm completed successfully!');
     console.log(`📁 Files created in: ${apiDir}`);
     console.log(`🆔 Swarm ID: ${swarmId}`);
   } else {
     // Create generic application
-    console.log(`\n🏗️  Creating application...`);
+    console.log('\n🏗️  Creating application...');
     
     const appCode = `// Application created by Claude Flow Swarm
 // Objective: ${objective}
@@ -1335,15 +1335,15 @@ main();
 `;
     
     await fs.promises.writeFile(path.join(targetDir, 'app.js'), appCode);
-    console.log(`  ✅ Created: app.js`);
+    console.log('  ✅ Created: app.js');
     
     const packageJson = {
-      name: "swarm-app",
-      version: "1.0.0",
+      name: 'swarm-app',
+      version: '1.0.0',
       description: `Application created by Claude Flow Swarm: ${objective}`,
-      main: "app.js",
+      main: 'app.js',
       scripts: {
-        start: "node app.js"
+        start: 'node app.js'
       },
       swarmMetadata: {
         swarmId,
@@ -1356,9 +1356,9 @@ main();
       path.join(targetDir, 'package.json'), 
       JSON.stringify(packageJson, null, 2)
     );
-    console.log(`  ✅ Created: package.json`);
+    console.log('  ✅ Created: package.json');
     
-    console.log(`\n✅ Swarm completed successfully!`);
+    console.log('\n✅ Swarm completed successfully!');
     console.log(`📁 Files created in: ${targetDir}`);
     console.log(`🆔 Swarm ID: ${swarmId}`);
   }

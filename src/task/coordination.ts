@@ -561,7 +561,7 @@ export class TaskCoordinator extends EventEmitter {
           },
           {
             id: generateId('todo'),
-            content: `Validate and finalize results`,
+            content: 'Validate and finalize results',
             status: 'pending',
             priority: 'medium',
             dependencies: ['main_execution'],

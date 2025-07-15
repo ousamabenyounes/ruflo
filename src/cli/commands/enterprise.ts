@@ -1144,7 +1144,7 @@ export const enterpriseCommands: Command[] = [
               console.log(`  Type: ${insight.type} | Category: ${insight.category} | Confidence: ${insight.confidence}%`);
               
               if (insight.recommendations.length > 0) {
-                console.log(`  Recommendations:`);
+                console.log('  Recommendations:');
                 for (const rec of insight.recommendations) {
                   console.log(`    • ${rec.action} (${rec.effort} effort)`);
                 }
@@ -1301,7 +1301,7 @@ export const enterpriseCommands: Command[] = [
 
                 const prediction = await manager.makePrediction(modelId, input);
 
-                success(`Prediction made:`);
+                success('Prediction made:');
                 console.log(`${blue('Model:')} ${modelId}`);
                 console.log(`${blue('Input:')} ${JSON.stringify(input)}`);
                 console.log(`${blue('Prediction:')} ${JSON.stringify(prediction.prediction)}`);

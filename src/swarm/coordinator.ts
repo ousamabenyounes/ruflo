@@ -1046,7 +1046,7 @@ export class SwarmCoordinator extends EventEmitter implements SwarmEventEmitter 
   private calculateCapabilityMatch(agent: AgentState, task: TaskDefinition): number {
     const requiredCapabilities = task.requirements.capabilities;
     let matches = 0;
-    let total = requiredCapabilities.length;
+    const total = requiredCapabilities.length;
 
     for (const capability of requiredCapabilities) {
       if (this.agentHasCapability(agent, capability)) {
@@ -1624,7 +1624,7 @@ Focus on creating a working implementation that matches the user's request exact
       // Task 3: Testing
       const task3 = this.createTaskForObjective('write-tests', 'testing', {
         title: 'Create Tests',
-        description: `Write tests for the implementation`,
+        description: 'Write tests for the implementation',
         instructions: `Please create comprehensive tests for the implementation created in the previous task.
 
 Target Directory: ${targetPath || 'Use the same directory as the implementation'}
@@ -1645,7 +1645,7 @@ Create appropriate test files that:
       // Task 4: Documentation
       const task4 = this.createTaskForObjective('create-documentation', 'documentation', {
         title: 'Create Documentation',
-        description: `Document the implementation`,
+        description: 'Document the implementation',
         instructions: `Please create comprehensive documentation for the implemented solution.
 
 Target Directory: ${targetPath || 'Use the same directory as the implementation'}
@@ -2206,33 +2206,33 @@ Ensure your implementation is complete, well-structured, and follows best practi
   
   private createExecutionPrompt(task: TaskDefinition): string {
     // Create a prompt that Claude will understand
-    let prompt = `# Swarm Task Execution\n\n`;
+    let prompt = '# Swarm Task Execution\n\n';
     prompt += `## Task: ${task.name}\n\n`;
     prompt += `${task.instructions || task.description}\n\n`;
     
     // Add working directory information if available
     const targetDir = this.extractTargetDirectory(task);
     if (targetDir) {
-      prompt += `## Working Directory\n`;
+      prompt += '## Working Directory\n';
       prompt += `Please create all files in: ${targetDir}\n\n`;
     }
     
     if (task.input && Object.keys(task.input).length > 0) {
-      prompt += `## Additional Input\n`;
+      prompt += '## Additional Input\n';
       prompt += `${JSON.stringify(task.input, null, 2)}\n\n`;
     }
     
     if (task.context && Object.keys(task.context).length > 0) {
-      prompt += `## Context\n`;
+      prompt += '## Context\n';
       prompt += `${JSON.stringify(task.context, null, 2)}\n\n`;
     }
     
     // Add execution guidelines
-    prompt += `## Guidelines\n`;
-    prompt += `- Focus on completing this specific task\n`;
-    prompt += `- Create all necessary files and directories\n`;
-    prompt += `- Follow best practices for the technology being used\n`;
-    prompt += `- Ensure the implementation is complete and functional\n`;
+    prompt += '## Guidelines\n';
+    prompt += '- Focus on completing this specific task\n';
+    prompt += '- Create all necessary files and directories\n';
+    prompt += '- Follow best practices for the technology being used\n';
+    prompt += '- Ensure the implementation is complete and functional\n';
     
     return prompt;
   }
@@ -2302,12 +2302,12 @@ Ensure your implementation is complete, well-structured, and follows best practi
     const claudeArgs = [prompt];
     
     // Always skip permissions for swarm automation
-    claudeArgs.push("--dangerously-skip-permissions");
+    claudeArgs.push('--dangerously-skip-permissions');
     
     // Add non-interactive flags for automation
-    claudeArgs.push("-p"); // Print mode
-    claudeArgs.push("--output-format", "stream-json");
-    claudeArgs.push("--verbose"); // Required when using stream-json with -p
+    claudeArgs.push('-p'); // Print mode
+    claudeArgs.push('--output-format', 'stream-json');
+    claudeArgs.push('--verbose'); // Required when using stream-json with -p
     
     // Set working directory if specified
     if (targetDir) {
@@ -2332,23 +2332,23 @@ Ensure your implementation is complete, well-structured, and follows best practi
       }
       
       // Execute Claude with the prompt
-      const command = new Deno.Command("claude", {
+      const command = new Deno.Command('claude', {
         args: claudeArgs,
         cwd: targetDir || process.cwd(),
         env: {
           ...Deno.env.toObject(),
           CLAUDE_INSTANCE_ID: instanceId,
-          CLAUDE_SWARM_MODE: "true",
+          CLAUDE_SWARM_MODE: 'true',
           CLAUDE_SWARM_ID: this.swarmId.id,
           CLAUDE_TASK_ID: task.id.id,
           CLAUDE_AGENT_ID: agent.id.id,
           CLAUDE_WORKING_DIRECTORY: targetDir || process.cwd(),
-          CLAUDE_FLOW_MEMORY_ENABLED: "true",
+          CLAUDE_FLOW_MEMORY_ENABLED: 'true',
           CLAUDE_FLOW_MEMORY_NAMESPACE: `swarm-${this.swarmId.id}`,
         },
-        stdin: "null",
-        stdout: "piped",
-        stderr: "piped",
+        stdin: 'null',
+        stdout: 'piped',
+        stderr: 'piped',
       });
       
       this.logger.info('Spawning Claude agent for task', { 
@@ -2396,48 +2396,48 @@ Ensure your implementation is complete, well-structured, and follows best practi
     const tools = new Set<string>();
     
     // Basic tools for all tasks
-    tools.add("View");
-    tools.add("Edit");
-    tools.add("Bash");
+    tools.add('View');
+    tools.add('Edit');
+    tools.add('Bash');
     
     // Add tools based on task type
     switch (task.type) {
       case 'coding':
-        tools.add("Create");
-        tools.add("Write");
-        tools.add("MultiEdit");
-        tools.add("Test");
+        tools.add('Create');
+        tools.add('Write');
+        tools.add('MultiEdit');
+        tools.add('Test');
         break;
       case 'testing':
-        tools.add("Test");
-        tools.add("View");
+        tools.add('Test');
+        tools.add('View');
         break;
       case 'documentation':
-        tools.add("Write");
-        tools.add("Create");
+        tools.add('Write');
+        tools.add('Create');
         break;
       case 'analysis':
-        tools.add("Analyze");
-        tools.add("Search");
+        tools.add('Analyze');
+        tools.add('Search');
         break;
       case 'research':
-        tools.add("WebSearch");
-        tools.add("Search");
+        tools.add('WebSearch');
+        tools.add('Search');
         break;
     }
     
     // Add tools based on agent capabilities
     if (agent.capabilities.fileSystem) {
-      tools.add("FileSystem");
+      tools.add('FileSystem');
     }
     if (agent.capabilities.terminalAccess) {
-      tools.add("Terminal");
+      tools.add('Terminal');
     }
     if (agent.capabilities.webSearch) {
-      tools.add("WebSearch");
+      tools.add('WebSearch');
     }
     if (agent.capabilities.apiIntegration) {
-      tools.add("API");
+      tools.add('API');
     }
     
     return Array.from(tools);
@@ -2614,24 +2614,24 @@ module.exports = app;
       // Create package.json
       const packageJson = {
         name: projectName,
-        version: "1.0.0",
-        description: "REST API created by Claude Flow Swarm",
-        main: "server.js",
+        version: '1.0.0',
+        description: 'REST API created by Claude Flow Swarm',
+        main: 'server.js',
         scripts: {
-          start: "node server.js",
-          dev: "nodemon server.js",
-          test: "jest"
+          start: 'node server.js',
+          dev: 'nodemon server.js',
+          test: 'jest'
         },
-        keywords: ["rest", "api", "swarm", "claude-flow"],
-        author: "Claude Flow Swarm",
-        license: "MIT",
+        keywords: ['rest', 'api', 'swarm', 'claude-flow'],
+        author: 'Claude Flow Swarm',
+        license: 'MIT',
         dependencies: {
-          express: "^4.18.2"
+          express: '^4.18.2'
         },
         devDependencies: {
-          nodemon: "^3.0.1",
-          jest: "^29.7.0",
-          supertest: "^6.3.3"
+          nodemon: '^3.0.1',
+          jest: '^29.7.0',
+          supertest: '^6.3.3'
         },
         swarmMetadata: {
           swarmId: this.swarmId.id,
@@ -2743,17 +2743,17 @@ if (typeof module !== 'undefined' && module.exports) {
       
       // Create package.json
       const packageJson = {
-        name: "hello-world",
-        version: "1.0.0",
-        description: "Hello World application created by Claude Flow Swarm",
-        main: "index.js",
+        name: 'hello-world',
+        version: '1.0.0',
+        description: 'Hello World application created by Claude Flow Swarm',
+        main: 'index.js',
         scripts: {
-          start: "node index.js",
-          test: "node test.js"
+          start: 'node index.js',
+          test: 'node test.js'
         },
-        keywords: ["hello-world", "swarm", "claude-flow"],
-        author: "Claude Flow Swarm",
-        license: "MIT"
+        keywords: ['hello-world', 'swarm', 'claude-flow'],
+        author: 'Claude Flow Swarm',
+        license: 'MIT'
       };
       
       await fs.writeFile(

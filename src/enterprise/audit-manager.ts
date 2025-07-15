@@ -710,7 +710,7 @@ export class AuditManager extends EventEmitter {
     let totalEntries = 0;
     let verifiedEntries = 0;
     let corruptedEntries = 0;
-    let missingEntries = 0;
+    const missingEntries = 0;
 
     const trails = trailId ? [this.auditTrails.get(trailId)].filter(Boolean) as AuditTrail[] : 
                             Array.from(this.auditTrails.values());
@@ -1528,7 +1528,7 @@ export class AuditManager extends EventEmitter {
       xml += `    <severity>${entry.severity}</severity>\n`;
       xml += `    <action>${entry.action}</action>\n`;
       xml += `    <outcome>${entry.outcome}</outcome>\n`;
-      xml += `  </entry>\n`;
+      xml += '  </entry>\n';
     }
     
     xml += '</auditEntries>';

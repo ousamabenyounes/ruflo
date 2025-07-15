@@ -268,7 +268,7 @@ export class ClaudeCodeMCPWrapper {
 
     // Add available tools
     if (mode.tools && mode.tools.length > 0) {
-      parts.push(`## Available Tools`);
+      parts.push('## Available Tools');
       mode.tools.forEach(tool => {
         parts.push(`- **${tool}**: ${this.getToolDescription(tool)}`);
       });
@@ -282,7 +282,7 @@ export class ClaudeCodeMCPWrapper {
 
     // Add best practices
     if (mode.bestPractices) {
-      parts.push(`## Best Practices`);
+      parts.push('## Best Practices');
       mode.bestPractices.forEach(practice => {
         parts.push(`- ${practice}`);
       });
@@ -291,7 +291,7 @@ export class ClaudeCodeMCPWrapper {
 
     // Add integration capabilities
     if (mode.integrationCapabilities) {
-      parts.push(`## Integration Capabilities\nThis mode integrates with:`);
+      parts.push('## Integration Capabilities\nThis mode integrates with:');
       mode.integrationCapabilities.forEach(capability => {
         parts.push(`- ${capability}`);
       });
@@ -315,7 +315,7 @@ export class ClaudeCodeMCPWrapper {
         parts.push(`**Memory Key:** \`${context.memoryKey}\``);
       }
       if (context.parallel) {
-        parts.push(`**Parallel Execution:** Enabled`);
+        parts.push('**Parallel Execution:** Enabled');
       }
       if (context.workingDirectory) {
         parts.push(`**Working Directory:** ${context.workingDirectory}`);

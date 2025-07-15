@@ -450,7 +450,7 @@ export class EnhancedWebUIComplete {
     const mcpStatus = this.mcpIntegration ? this.mcpIntegration.getStatus() : null;
     const toolStatus = this.toolFramework ? this.toolFramework.getStatus() : null;
     
-    let statusLine = `🧠 Claude-Flow Enhanced UI | `;
+    let statusLine = '🧠 Claude-Flow Enhanced UI | ';
     statusLine += `MCP: ${mcpStatus?.mcpAvailable ? this.colors.green('✓') : this.colors.red('✗')} | `;
     statusLine += `Tools: ${this.colors.yellow(mcpStatus?.totalTools || 87)} | `;
     statusLine += `Active: ${this.colors.blue(toolStatus?.currentExecutions || 0)} | `;

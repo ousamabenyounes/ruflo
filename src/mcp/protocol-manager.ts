@@ -187,7 +187,7 @@ export class MCPProtocolManager {
       if (versionInfo?.deprecated) {
         result.warnings.push(
           `Protocol version ${this.versionToString(result.agreedVersion)} is deprecated. ` +
-          `Please upgrade to a newer version.`
+          'Please upgrade to a newer version.'
         );
       }
 

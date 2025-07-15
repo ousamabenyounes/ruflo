@@ -5,7 +5,7 @@
 // - @cliffy/table -> cli-table3
 // - @cliffy/ansi/colors -> chalk
 // This file is kept for reference only and should be removed once migration is complete.
-declare module "@cliffy/ansi/colors" {
+declare module '@cliffy/ansi/colors' {
   export interface ColorFunction {
     (text: string): string;
   }
@@ -34,7 +34,7 @@ declare module "@cliffy/ansi/colors" {
   export const colors: Colors;
 }
 
-declare module "@cliffy/prompt" {
+declare module '@cliffy/prompt' {
   export function select<T>(options: {
     message: string;
     options: Array<{ name: string; value: T }>;
@@ -66,7 +66,7 @@ declare module "@cliffy/prompt" {
   export const Number: typeof number;
 }
 
-declare module "@cliffy/command" {
+declare module '@cliffy/command' {
   export class Command {
     name(name: string): this;
     version(version: string): this;

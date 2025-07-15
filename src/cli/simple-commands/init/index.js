@@ -277,7 +277,7 @@ export async function initCommand(subArgs, flags) {
         // Also create sparc-modes.md overview file
         const sparcModesOverview = createSparcModesOverview();
         await Deno.writeTextFile(`${sparcTargetDir}/sparc-modes.md`, sparcModesOverview);
-        console.log(`    ✓ Created sparc-modes.md`);
+        console.log('    ✓ Created sparc-modes.md');
         
         console.log('  ✅ SPARC command files created successfully');
       } catch (err) {
@@ -310,14 +310,14 @@ export async function initCommand(subArgs, flags) {
       // Create .claude/config.json
       try {
         const configContent = {
-          "version": "1.0",
-          "sparc": {
-            "enabled": true,
-            "modes": ["orchestrator", "coder", "researcher", "tdd", "architect", "reviewer", "debugger", "tester", "analyzer", "optimizer", "documenter", "designer", "innovator", "swarm-coordinator", "memory-manager", "batch-executor", "workflow-manager"]
+          'version': '1.0',
+          'sparc': {
+            'enabled': true,
+            'modes': ['orchestrator', 'coder', 'researcher', 'tdd', 'architect', 'reviewer', 'debugger', 'tester', 'analyzer', 'optimizer', 'documenter', 'designer', 'innovator', 'swarm-coordinator', 'memory-manager', 'batch-executor', 'workflow-manager']
           },
-          "swarm": {
-            "enabled": true,
-            "strategies": ["research", "development", "analysis", "testing", "optimization", "maintenance"]
+          'swarm': {
+            'enabled': true,
+            'strategies': ['research', 'development', 'analysis', 'testing', 'optimization', 'maintenance']
           }
         };
         
@@ -1031,12 +1031,12 @@ async function enhancedClaudeFlowInit(flags, subArgs = []) {
     
     // Create settings.local.json with default MCP permissions
     const settingsLocal = {
-      "permissions": {
-        "allow": [
-          "mcp__ruv-swarm",
-          "mcp__claude-flow"
+      'permissions': {
+        'allow': [
+          'mcp__ruv-swarm',
+          'mcp__claude-flow'
         ],
-        "deny": []
+        'deny': []
       }
     };
     
@@ -1049,16 +1049,16 @@ async function enhancedClaudeFlowInit(flags, subArgs = []) {
     
     // Create mcp.json for easy MCP server configuration
     const mcpConfig = {
-      "mcpServers": {
-        "claude-flow": {
-          "command": "npx",
-          "args": ["claude-flow@alpha", "mcp", "start"],
-          "type": "stdio"
+      'mcpServers': {
+        'claude-flow': {
+          'command': 'npx',
+          'args': ['claude-flow@alpha', 'mcp', 'start'],
+          'type': 'stdio'
         },
-        "ruv-swarm": {
-          "command": "npx",
-          "args": ["ruv-swarm@latest", "mcp", "start"],
-          "type": "stdio"
+        'ruv-swarm': {
+          'command': 'npx',
+          'args': ['ruv-swarm@latest', 'mcp', 'start'],
+          'type': 'stdio'
         }
       }
     };

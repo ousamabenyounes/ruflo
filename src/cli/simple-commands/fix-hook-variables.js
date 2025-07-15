@@ -301,9 +301,9 @@ async function createTestHook() {
   const testSettings = {
     hooks: {
       PostToolUse: [{
-        matcher: "Write",
+        matcher: 'Write',
         hooks: [{
-          type: "command",
+          type: 'command',
           command: "cat | jq -r '.tool_input.file_path // .tool_input.path // \"\"' | xargs -I {} echo \"Hook test - File: {}\" >> .claude/hook-test.log"
         }]
       }]

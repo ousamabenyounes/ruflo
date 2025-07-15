@@ -28,7 +28,7 @@ export async function startCommand(subArgs, flags) {
         const { startWebServer } = await import('./web-server.js');
         const server = await startWebServer(port);
         
-        printSuccess(`🌐 Web UI is running!`);
+        printSuccess('🌐 Web UI is running!');
         console.log(`📍 Open your browser to: http://localhost:${port}/console`);
         console.log('   Press Ctrl+C to stop the server');
         console.log();
@@ -98,8 +98,8 @@ export async function startCommand(subArgs, flags) {
     console.log(`   Mode: ${daemon ? 'Daemon (background)' : 'Interactive'}`);
     console.log(`   MCP Port: ${port}`);
     console.log(`   Working Directory: ${cwd()}`);
-    console.log(`   Memory Backend: JSON (default)`);
-    console.log(`   Terminal Pool: 5 instances (default)`);
+    console.log('   Memory Backend: JSON (default)');
+    console.log('   Terminal Pool: 5 instances (default)');
     console.log();
     
     // Initialize components
@@ -177,7 +177,7 @@ export async function startCommand(subArgs, flags) {
       // Set up signal handlers
       const abortController = new AbortController();
       
-      compat.terminal.onSignal("SIGINT", () => {
+      compat.terminal.onSignal('SIGINT', () => {
         console.log('\n⏹️  Shutting down orchestrator...');
         cleanup();
         compat.terminal.exit(0);

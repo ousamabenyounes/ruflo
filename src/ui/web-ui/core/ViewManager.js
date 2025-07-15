@@ -405,8 +405,8 @@ export class ViewManager {
         if (viewConfig.toolCount) {
           console.log(`   Tools: ${viewConfig.toolCount}`);
         }
-        console.log(`   Params:`, params);
-        console.log(`   [This view is under development]\n`);
+        console.log('   Params:', params);
+        console.log('   [This view is under development]\n');
       },
       destroy: () => {}
     };

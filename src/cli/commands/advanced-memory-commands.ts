@@ -754,10 +754,10 @@ async function getCommand(args: string[], flags: Record<string, any>): Promise<v
       }
       
       if (entry.compressed) {
-        console.log(`🗜️  Compressed: Yes`);
+        console.log('🗜️  Compressed: Yes');
       }
       
-      console.log(`💾 Value:`);
+      console.log('💾 Value:');
       if (typeof entry.value === 'string' && entry.value.length > 500) {
         console.log(entry.value.substring(0, 500) + '...');
         console.log(`(showing first 500 characters of ${entry.value.length} total)`);

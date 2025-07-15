@@ -46,7 +46,7 @@ export const mcpCommand = new Command()
 
         console.log(chalk.green(`✅ MCP server started on ${options.host}:${options.port}`));
         console.log(chalk.cyan(`📡 Server URL: http://${options.host}:${options.port}`));
-        console.log(chalk.cyan(`🔧 Available tools: Research, Code, Terminal, Memory`));
+        console.log(chalk.cyan('🔧 Available tools: Research, Code, Terminal, Memory'));
         console.log(chalk.cyan(`📚 API documentation: http://${options.host}:${options.port}/docs`));
       } catch (error) {
         console.error(chalk.red(`❌ Failed to start MCP server: ${(error as Error).message}`));

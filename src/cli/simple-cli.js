@@ -227,17 +227,17 @@ async function main() {
     case 'environment':
       if (enhancedFlags._environment) {
         const env = enhancedFlags._environment;
-        console.log(`\n🖥️  Environment Detection Results:`);
+        console.log('\n🖥️  Environment Detection Results:');
         console.log(`   Terminal: ${env.terminalType}`);
         console.log(`   Interactive: ${env.isInteractive ? 'Yes' : 'No'}`);
         console.log(`   TTY Support: ${env.supportsRawMode ? 'Yes' : 'No'}`);
         console.log(`   Detected: ${env.isVSCode ? 'VS Code' : env.isCI ? 'CI/CD' : env.isDocker ? 'Docker' : env.isSSH ? 'SSH' : 'Standard Terminal'}`);
         if (env.recommendedFlags.length > 0) {
-          console.log(`\n💡 Recommended flags:`);
+          console.log('\n💡 Recommended flags:');
           console.log(`   ${env.recommendedFlags.join(' ')}`);
         }
         if (enhancedFlags.appliedDefaults && enhancedFlags.appliedDefaults.length > 0) {
-          console.log(`\n✅ Auto-applied:`);
+          console.log('\n✅ Auto-applied:');
           console.log(`   ${enhancedFlags.appliedDefaults.join(' ')}`);
         }
         console.log();
@@ -730,7 +730,7 @@ async function main() {
           console.log(`   ✓ Created /projects/${projectName}/workflows/`);
           console.log(`   ✓ Created /projects/${projectName}/config/`);
           console.log(`   ✓ Created /projects/${projectName}/data/`);
-          console.log(`   ✓ Created project-config.json`);
+          console.log('   ✓ Created project-config.json');
           console.log('\n✅ Project created successfully!');
           break;
           
@@ -1199,7 +1199,7 @@ async function main() {
               const replicas = subArgs[2] || '5';
               printSuccess(`Scaling Claude-Flow to ${replicas} replicas`);
               console.log('📈 Scaling Progress:');
-              console.log(`   Current replicas: 3`);
+              console.log('   Current replicas: 3');
               console.log(`   Target replicas: ${replicas}`);
               console.log('   ✓ Updating deployment');
               console.log('   ✓ Rolling update in progress');
@@ -1309,10 +1309,10 @@ async function main() {
             console.log(`Mode: ${flags.mode || 'full'}`);
             console.log(`Coverage: ${flags.coverage || 80}%`);
             console.log(`Commit: ${flags.commit || 'phase'}`);
-            console.log(`\nEnhanced Features:`);
-            console.log(`  - Memory Bank enabled via: npx claude-flow memory commands`);
+            console.log('\nEnhanced Features:');
+            console.log('  - Memory Bank enabled via: npx claude-flow memory commands');
             console.log(`  - Coordination ${flags.parallel ? 'enabled' : 'disabled'}`);
-            console.log(`  - Access Claude-Flow features through Bash tool`);
+            console.log('  - Access Claude-Flow features through Bash tool');
           } else {
             printSuccess(`Spawning Claude instance: ${instanceId}`);
             console.log(`📝 Original Task: ${task}`);
@@ -1320,7 +1320,7 @@ async function main() {
             console.log(`⚙️  Mode: ${flags.mode || 'full'}`);
             console.log(`📊 Coverage: ${flags.coverage || 80}%`);
             console.log(`💾 Commit: ${flags.commit || 'phase'}`);
-            console.log(`✨ Enhanced with Claude-Flow guidance for memory and coordination`);
+            console.log('✨ Enhanced with Claude-Flow guidance for memory and coordination');
             console.log('');
             console.log('📋 Task will be enhanced with:');
             console.log('  - Memory Bank instructions (store/retrieve)');
@@ -1432,10 +1432,10 @@ Bash("npx claude-flow task create backend 'Implement API endpoints'")
 Remember: These are optional tools. Use them when they add value to your development process.
 
 ## Development Mode: ${flags.mode || 'full'}
-${flags.mode === 'backend-only' ? `Focus on server-side implementation, APIs, and business logic.` : ''}
-${flags.mode === 'frontend-only' ? `Focus on client-side implementation, UI/UX, and user interactions.` : ''}
-${flags.mode === 'api-only' ? `Focus on API design, documentation, and endpoint implementation.` : ''}
-${flags.mode === 'full' || !flags.mode ? `Full-stack development covering all aspects of the application.` : ''}
+${flags.mode === 'backend-only' ? 'Focus on server-side implementation, APIs, and business logic.' : ''}
+${flags.mode === 'frontend-only' ? 'Focus on client-side implementation, UI/UX, and user interactions.' : ''}
+${flags.mode === 'api-only' ? 'Focus on API design, documentation, and endpoint implementation.' : ''}
+${flags.mode === 'full' || !flags.mode ? 'Full-stack development covering all aspects of the application.' : ''}
 
 `;
             
@@ -2925,54 +2925,54 @@ async function createSparcStructureManually() {
 
 function createBasicRoomodesConfig() {
   return JSON.stringify({
-    "customModes": [
+    'customModes': [
       {
-        "slug": "architect",
-        "name": "🏗️ Architect", 
-        "roleDefinition": "You design scalable, secure, and modular architectures based on functional specs and user needs. You define responsibilities across services, APIs, and components.",
-        "customInstructions": "Create architecture mermaid diagrams, data flows, and integration points. Ensure no part of the design includes secrets or hardcoded env values. Emphasize modular boundaries and maintain extensibility.",
-        "groups": ["read", "edit"],
-        "source": "project"
+        'slug': 'architect',
+        'name': '🏗️ Architect', 
+        'roleDefinition': 'You design scalable, secure, and modular architectures based on functional specs and user needs. You define responsibilities across services, APIs, and components.',
+        'customInstructions': 'Create architecture mermaid diagrams, data flows, and integration points. Ensure no part of the design includes secrets or hardcoded env values. Emphasize modular boundaries and maintain extensibility.',
+        'groups': ['read', 'edit'],
+        'source': 'project'
       },
       {
-        "slug": "code",
-        "name": "🧠 Auto-Coder",
-        "roleDefinition": "You write clean, efficient, modular code based on pseudocode and architecture. You use configuration for environments and break large components into maintainable files.",
-        "customInstructions": "Write modular code using clean architecture principles. Never hardcode secrets or environment values. Split code into files < 500 lines. Use config files or environment abstractions. Use \\`new_task\\` for subtasks and finish with \\`attempt_completion\\`.",
-        "groups": ["read", "edit", "browser", "mcp", "command"],
-        "source": "project"
+        'slug': 'code',
+        'name': '🧠 Auto-Coder',
+        'roleDefinition': 'You write clean, efficient, modular code based on pseudocode and architecture. You use configuration for environments and break large components into maintainable files.',
+        'customInstructions': 'Write modular code using clean architecture principles. Never hardcode secrets or environment values. Split code into files < 500 lines. Use config files or environment abstractions. Use \\`new_task\\` for subtasks and finish with \\`attempt_completion\\`.',
+        'groups': ['read', 'edit', 'browser', 'mcp', 'command'],
+        'source': 'project'
       },
       {
-        "slug": "tdd",
-        "name": "🧪 Tester (TDD)",
-        "roleDefinition": "You implement Test-Driven Development (TDD, London School), writing tests first and refactoring after minimal implementation passes.",
-        "customInstructions": "Write failing tests first. Implement only enough code to pass. Refactor after green. Ensure tests do not hardcode secrets. Keep files < 500 lines.",
-        "groups": ["read", "edit", "browser", "mcp", "command"],
-        "source": "project"
+        'slug': 'tdd',
+        'name': '🧪 Tester (TDD)',
+        'roleDefinition': 'You implement Test-Driven Development (TDD, London School), writing tests first and refactoring after minimal implementation passes.',
+        'customInstructions': 'Write failing tests first. Implement only enough code to pass. Refactor after green. Ensure tests do not hardcode secrets. Keep files < 500 lines.',
+        'groups': ['read', 'edit', 'browser', 'mcp', 'command'],
+        'source': 'project'
       },
       {
-        "slug": "spec-pseudocode",
-        "name": "📋 Specification Writer",
-        "roleDefinition": "You capture full project context—functional requirements, edge cases, constraints—and translate that into modular pseudocode with TDD anchors.",
-        "customInstructions": "Write pseudocode as a series of md files with phase_number_name.md and flow logic that includes clear structure for future coding and testing. Split complex logic across modules.",
-        "groups": ["read", "edit"],
-        "source": "project"
+        'slug': 'spec-pseudocode',
+        'name': '📋 Specification Writer',
+        'roleDefinition': 'You capture full project context—functional requirements, edge cases, constraints—and translate that into modular pseudocode with TDD anchors.',
+        'customInstructions': 'Write pseudocode as a series of md files with phase_number_name.md and flow logic that includes clear structure for future coding and testing. Split complex logic across modules.',
+        'groups': ['read', 'edit'],
+        'source': 'project'
       },
       {
-        "slug": "integration",
-        "name": "🔗 System Integrator",
-        "roleDefinition": "You merge the outputs of all modes into a working, tested, production-ready system. You ensure consistency, cohesion, and modularity.",
-        "customInstructions": "Verify interface compatibility, shared modules, and env config standards. Split integration logic across domains as needed. Use \\`new_task\\` for preflight testing.",
-        "groups": ["read", "edit", "browser", "mcp", "command"],
-        "source": "project"
+        'slug': 'integration',
+        'name': '🔗 System Integrator',
+        'roleDefinition': 'You merge the outputs of all modes into a working, tested, production-ready system. You ensure consistency, cohesion, and modularity.',
+        'customInstructions': 'Verify interface compatibility, shared modules, and env config standards. Split integration logic across domains as needed. Use \\`new_task\\` for preflight testing.',
+        'groups': ['read', 'edit', 'browser', 'mcp', 'command'],
+        'source': 'project'
       },
       {
-        "slug": "debug",
-        "name": "🪲 Debugger",
-        "roleDefinition": "You troubleshoot runtime bugs, logic errors, or integration failures by tracing, inspecting, and analyzing behavior.",
-        "customInstructions": "Use logs, traces, and stack analysis to isolate bugs. Avoid changing env configuration directly. Keep fixes modular.",
-        "groups": ["read", "edit", "browser", "mcp", "command"],
-        "source": "project"
+        'slug': 'debug',
+        'name': '🪲 Debugger',
+        'roleDefinition': 'You troubleshoot runtime bugs, logic errors, or integration failures by tracing, inspecting, and analyzing behavior.',
+        'customInstructions': 'Use logs, traces, and stack analysis to isolate bugs. Avoid changing env configuration directly. Keep fixes modular.',
+        'groups': ['read', 'edit', 'browser', 'mcp', 'command'],
+        'source': 'project'
       }
     ]
   }, null, 2);
@@ -2980,34 +2980,34 @@ function createBasicRoomodesConfig() {
 
 function createBasicSparcWorkflow() {
   return JSON.stringify({
-    "name": "Basic TDD Workflow",
-    "description": "A simple SPARC-based TDD workflow for development",
-    "sequential": true,
-    "steps": [
+    'name': 'Basic TDD Workflow',
+    'description': 'A simple SPARC-based TDD workflow for development',
+    'sequential': true,
+    'steps': [
       {
-        "mode": "spec-pseudocode",
-        "description": "Create detailed specifications and pseudocode",
-        "phase": "specification"
+        'mode': 'spec-pseudocode',
+        'description': 'Create detailed specifications and pseudocode',
+        'phase': 'specification'
       },
       {
-        "mode": "tdd", 
-        "description": "Write failing tests (Red phase)",
-        "phase": "red"
+        'mode': 'tdd', 
+        'description': 'Write failing tests (Red phase)',
+        'phase': 'red'
       },
       {
-        "mode": "code",
-        "description": "Implement minimal code to pass tests (Green phase)", 
-        "phase": "green"
+        'mode': 'code',
+        'description': 'Implement minimal code to pass tests (Green phase)', 
+        'phase': 'green'
       },
       {
-        "mode": "tdd",
-        "description": "Refactor and optimize (Refactor phase)",
-        "phase": "refactor"
+        'mode': 'tdd',
+        'description': 'Refactor and optimize (Refactor phase)',
+        'phase': 'refactor'
       },
       {
-        "mode": "integration",
-        "description": "Integrate and verify complete solution",
-        "phase": "integration"
+        'mode': 'integration',
+        'description': 'Integrate and verify complete solution',
+        'phase': 'integration'
       }
     ]
   }, null, 2);

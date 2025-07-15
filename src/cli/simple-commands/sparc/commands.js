@@ -81,7 +81,7 @@ export async function sparcApi(taskDescription, options = {}) {
     console.log('\n✅ SPARC API Development completed');
     console.log(`🔌 API Endpoints: ${result.architecture?.apiDesign?.endpoints?.length || 0}`);
     console.log(`🔒 Security Score: ${result.refinement?.security?.score || 0}/100`);
-    console.log(`📋 OpenAPI Spec: Generated`);
+    console.log('📋 OpenAPI Spec: Generated');
     
     return result;
   } catch (error) {
@@ -175,7 +175,7 @@ export async function sparcTest(taskDescription, options = {}) {
     
     console.log('\n✅ SPARC Test Development completed');
     console.log(`🧪 Test Coverage: ${result.refinement?.testResults?.coverage?.toFixed(1)}%`);
-    console.log(`🔬 Test Types: Unit, Integration, E2E, Performance`);
+    console.log('🔬 Test Types: Unit, Integration, E2E, Performance');
     console.log(`⚡ TDD Cycles: ${result.refinement?.tddCycles?.length || 0}`);
     
     return result;

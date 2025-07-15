@@ -1,4 +1,4 @@
-import { printSuccess, printError, printWarning, callRuvSwarmMCP, spawnSwarmAgent, getSwarmStatus, checkRuvSwarmAvailable } from "../utils.js";
+import { printSuccess, printError, printWarning, callRuvSwarmMCP, spawnSwarmAgent, getSwarmStatus, checkRuvSwarmAvailable } from '../utils.js';
 
 // Simple ID generator
 function generateId(prefix = 'id') {
@@ -41,7 +41,7 @@ async function swarmInitCommand(subArgs, flags) {
     const maxAgents = parseInt(options['max-agents'] || options.maxAgents || '5');
     const strategy = options.strategy || 'balanced';
 
-    console.log(`🐝 Initializing swarm coordination...`);
+    console.log('🐝 Initializing swarm coordination...');
     console.log(`🆔 Swarm ID: ${swarmId}`);
     console.log(`🏗️  Topology: ${topology}`);
     console.log(`🤖 Max agents: ${maxAgents}`);
@@ -54,7 +54,7 @@ async function swarmInitCommand(subArgs, flags) {
     }
 
     try {
-        console.log(`\n🔄 Initializing real swarm with ruv-swarm...`);
+        console.log('\n🔄 Initializing real swarm with ruv-swarm...');
         
         // Use real ruv-swarm initialization
         const swarmResult = await callRuvSwarmMCP('swarm_init', {
@@ -66,9 +66,9 @@ async function swarmInitCommand(subArgs, flags) {
         });
         
         if (swarmResult.success) {
-            printSuccess(`✅ Swarm coordination initialized successfully`);
+            printSuccess('✅ Swarm coordination initialized successfully');
             
-            console.log(`\n🎯 COORDINATION SETUP COMPLETE:`);
+            console.log('\n🎯 COORDINATION SETUP COMPLETE:');
             console.log(`  🐝 Swarm: ${swarmId}`);
             console.log(`  🏗️  Topology: ${topology}`);
             console.log(`  📊 Capacity: ${maxAgents} agents`);
@@ -76,7 +76,7 @@ async function swarmInitCommand(subArgs, flags) {
             console.log(`  🔗 Channels: ${swarmResult.communicationChannels || 'Established'}`);
             console.log(`  📈 Performance: ${swarmResult.expectedPerformance || 'Optimized'}`);
             
-            console.log(`\n📋 NEXT STEPS:`);
+            console.log('\n📋 NEXT STEPS:');
             console.log(`  1. Spawn agents: claude-flow coordination agent-spawn --type <type> --swarm-id ${swarmId}`);
             console.log(`  2. Orchestrate tasks: claude-flow coordination task-orchestrate --task "<description>" --swarm-id ${swarmId}`);
             console.log(`  3. Monitor swarm: claude-flow monitoring swarm-monitor --swarm-id ${swarmId}`);
@@ -96,7 +96,7 @@ async function agentSpawnCommand(subArgs, flags) {
     const swarmId = options['swarm-id'] || options.swarmId;
     const capabilities = options.capabilities || null;
 
-    console.log(`🤖 Spawning coordinated agent...`);
+    console.log('🤖 Spawning coordinated agent...');
     console.log(`🏷️  Agent type: ${agentType}`);
     console.log(`📛 Agent name: ${agentName}`);
     if (swarmId) console.log(`🐝 Target swarm: ${swarmId}`);
@@ -108,28 +108,28 @@ async function agentSpawnCommand(subArgs, flags) {
     }
 
     // Simulate agent spawning process
-    console.log(`\n🔄 Initializing agent coordination protocols...`);
+    console.log('\n🔄 Initializing agent coordination protocols...');
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    console.log(`🧠 Loading agent capabilities and neural patterns...`);
+    console.log('🧠 Loading agent capabilities and neural patterns...');
     await new Promise(resolve => setTimeout(resolve, 600));
 
-    console.log(`🔗 Establishing swarm communication links...`);
+    console.log('🔗 Establishing swarm communication links...');
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    console.log(`💾 Registering agent in coordination memory...`);
+    console.log('💾 Registering agent in coordination memory...');
     await new Promise(resolve => setTimeout(resolve, 400));
 
-    printSuccess(`✅ Agent spawned and coordinated successfully`);
+    printSuccess('✅ Agent spawned and coordinated successfully');
     
-    console.log(`\n🤖 AGENT COORDINATION DETAILS:`);
+    console.log('\n🤖 AGENT COORDINATION DETAILS:');
     console.log(`  🆔 Agent ID: ${generateId('agent')}`);
     console.log(`  🏷️  Type: ${agentType}`);
     console.log(`  📛 Name: ${agentName}`);
     console.log(`  🎯 Capabilities: ${getAgentCapabilities(agentType)}`);
-    console.log(`  🔗 Coordination: Active`);
-    console.log(`  💾 Memory access: Enabled`);
-    console.log(`  📊 Status: Ready for task assignment`);
+    console.log('  🔗 Coordination: Active');
+    console.log('  💾 Memory access: Enabled');
+    console.log('  📊 Status: Ready for task assignment');
     
     if (swarmId) {
         console.log(`  🐝 Swarm membership: ${swarmId}`);
@@ -148,48 +148,48 @@ async function taskOrchestrateCommand(subArgs, flags) {
         return;
     }
 
-    console.log(`🎯 Orchestrating task coordination...`);
+    console.log('🎯 Orchestrating task coordination...');
     console.log(`📋 Task: ${task}`);
     console.log(`📊 Strategy: ${strategy}`);
     if (swarmId) console.log(`🐝 Swarm: ${swarmId}`);
 
     // Simulate task orchestration
-    console.log(`\n🔄 Analyzing task requirements...`);
+    console.log('\n🔄 Analyzing task requirements...');
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    console.log(`🤖 Selecting optimal agents for task execution...`);
+    console.log('🤖 Selecting optimal agents for task execution...');
     await new Promise(resolve => setTimeout(resolve, 800));
 
     console.log(`📊 Configuring coordination strategy: ${strategy}...`);
     await new Promise(resolve => setTimeout(resolve, 600));
 
-    console.log(`🔗 Establishing task communication channels...`);
+    console.log('🔗 Establishing task communication channels...');
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    console.log(`💾 Setting up shared task memory...`);
+    console.log('💾 Setting up shared task memory...');
     await new Promise(resolve => setTimeout(resolve, 400));
 
-    printSuccess(`✅ Task orchestration configured successfully`);
+    printSuccess('✅ Task orchestration configured successfully');
     
-    console.log(`\n🎯 ORCHESTRATION DETAILS:`);
+    console.log('\n🎯 ORCHESTRATION DETAILS:');
     console.log(`  📋 Task: ${task}`);
     console.log(`  🆔 Task ID: ${generateId('task')}`);
     console.log(`  📊 Strategy: ${strategy}`);
-    console.log(`  🤖 Assigned agents: 3 (coordinator, developer, researcher)`);
-    console.log(`  🔗 Coordination: Active`);
-    console.log(`  💾 Shared memory: Configured`);
-    console.log(`  📈 Progress tracking: Enabled`);
+    console.log('  🤖 Assigned agents: 3 (coordinator, developer, researcher)');
+    console.log('  🔗 Coordination: Active');
+    console.log('  💾 Shared memory: Configured');
+    console.log('  📈 Progress tracking: Enabled');
     
     if (shareResults) {
-        console.log(`  🔄 Result sharing: Enabled across swarm`);
+        console.log('  🔄 Result sharing: Enabled across swarm');
     }
     
-    console.log(`\n📋 COORDINATION WORKFLOW:`);
-    console.log(`  1. ✅ Task analysis and decomposition complete`);
-    console.log(`  2. ✅ Agent selection and assignment complete`);
-    console.log(`  3. ✅ Communication channels established`);
-    console.log(`  4. 🔄 Task execution coordination in progress...`);
-    console.log(`  5. ⏳ Results aggregation and sharing pending`);
+    console.log('\n📋 COORDINATION WORKFLOW:');
+    console.log('  1. ✅ Task analysis and decomposition complete');
+    console.log('  2. ✅ Agent selection and assignment complete');
+    console.log('  3. ✅ Communication channels established');
+    console.log('  4. 🔄 Task execution coordination in progress...');
+    console.log('  5. ⏳ Results aggregation and sharing pending');
 }
 
 function getAgentCapabilities(type) {

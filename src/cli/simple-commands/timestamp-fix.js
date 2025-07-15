@@ -35,7 +35,7 @@ export function createSessionWithProperTimezone(objective, options = {}) {
 export function displaySessionInfo(session) {
   const timeDisplay = formatTimestampForDisplay(session.createdAt);
   
-  console.log(`🐝 Hive Mind Session`);
+  console.log('🐝 Hive Mind Session');
   console.log(`📋 ID: ${session.id}`);
   console.log(`🎯 Objective: ${session.objective}`);
   console.log(`⏰ Created: ${timeDisplay.display}`);

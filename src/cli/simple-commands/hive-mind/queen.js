@@ -386,9 +386,9 @@ export class QueenCoordinator extends EventEmitter {
         name: `Decision Phase ${index + 1}: ${decision}`,
         tasks: [
           `Research options for ${decision}`,
-          `Analyze trade-offs`,
-          `Build consensus on approach`,
-          `Implement chosen solution`
+          'Analyze trade-offs',
+          'Build consensus on approach',
+          'Implement chosen solution'
         ],
         workers: workers,
         parallel: index === 0, // Only first phase in parallel

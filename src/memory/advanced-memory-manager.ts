@@ -1298,13 +1298,13 @@ export class AdvancedMemoryManager extends EventEmitter {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<memory>\n';
     
     for (const entry of entries) {
-      xml += `  <entry>\n`;
+      xml += '  <entry>\n';
       xml += `    <key>${this.escapeXml(entry.key)}</key>\n`;
       xml += `    <value>${this.escapeXml(JSON.stringify(entry.value))}</value>\n`;
       xml += `    <type>${this.escapeXml(entry.type)}</type>\n`;
       xml += `    <namespace>${this.escapeXml(entry.namespace)}</namespace>\n`;
       xml += `    <tags>${this.escapeXml(entry.tags.join(','))}</tags>\n`;
-      xml += `  </entry>\n`;
+      xml += '  </entry>\n';
     }
     
     xml += '</memory>';

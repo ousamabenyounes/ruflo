@@ -24,7 +24,7 @@ export function add(a: number, b: number): number {
  * Simple hello world function
  */
 export function helloWorld(): string {
-  return "Hello, World!";
+  return 'Hello, World!';
 }
 
 /**

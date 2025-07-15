@@ -163,7 +163,7 @@ export class RollbackManager {
       const confirm = await inquirer.prompt([{
         type: 'confirm',
         name: 'proceed',
-        message: `Are you sure you want to rollback? This will overwrite current files.`,
+        message: 'Are you sure you want to rollback? This will overwrite current files.',
         default: false
       }]);
 

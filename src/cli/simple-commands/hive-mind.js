@@ -1457,7 +1457,7 @@ async function storeMemoryWizard() {
     
     await mcpWrapper.storeMemory('hive-mind', answers.key, memoryValue, answers.category);
     
-    console.log(chalk.green(`\n✅ Memory stored successfully!`));
+    console.log(chalk.green('\n✅ Memory stored successfully!'));
     console.log(`Key: ${answers.key}`);
     console.log(`Category: ${answers.category}`);
     

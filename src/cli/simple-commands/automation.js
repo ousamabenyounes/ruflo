@@ -1,4 +1,4 @@
-import { printSuccess, printError, printWarning } from "../utils.js";
+import { printSuccess, printError, printWarning } from '../utils.js';
 
 // Simple ID generator
 function generateId(prefix = 'id') {
@@ -39,7 +39,7 @@ async function autoAgentCommand(subArgs, flags) {
     const complexity = options['task-complexity'] || options.complexity || 'medium';
     const swarmId = options['swarm-id'] || options.swarmId || generateId('swarm');
 
-    console.log(`🤖 Auto-spawning agents based on task complexity...`);
+    console.log('🤖 Auto-spawning agents based on task complexity...');
     console.log(`📊 Task complexity: ${complexity}`);
     console.log(`🐝 Swarm ID: ${swarmId}`);
 
@@ -66,7 +66,7 @@ async function autoAgentCommand(subArgs, flags) {
             agentConfig = { coordinator: 1, developer: 2, researcher: 1, total: 4 };
     }
 
-    console.log(`\n🎯 OPTIMAL AGENT CONFIGURATION:`);
+    console.log('\n🎯 OPTIMAL AGENT CONFIGURATION:');
     Object.entries(agentConfig).forEach(([type, count]) => {
         if (type !== 'total') {
             console.log(`  🤖 ${type}: ${count} agents`);
@@ -77,10 +77,10 @@ async function autoAgentCommand(subArgs, flags) {
     // Simulate auto-spawning
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    printSuccess(`✅ Auto-agent spawning completed`);
+    printSuccess('✅ Auto-agent spawning completed');
     console.log(`🚀 ${agentConfig.total} agents spawned and configured for ${complexity} complexity tasks`);
     console.log(`💾 Agent configuration saved to swarm memory: ${swarmId}`);
-    console.log(`📋 Agents ready for task assignment`);
+    console.log('📋 Agents ready for task assignment');
 }
 
 async function smartSpawnCommand(subArgs, flags) {
@@ -88,7 +88,7 @@ async function smartSpawnCommand(subArgs, flags) {
     const requirement = options.requirement || 'general-development';
     const maxAgents = parseInt(options['max-agents'] || options.maxAgents || '10');
     
-    console.log(`🧠 Smart spawning agents based on requirements...`);
+    console.log('🧠 Smart spawning agents based on requirements...');
     console.log(`📋 Requirement: ${requirement}`);
     console.log(`🔢 Max agents: ${maxAgents}`);
 
@@ -131,8 +131,8 @@ async function smartSpawnCommand(subArgs, flags) {
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    printSuccess(`✅ Smart spawn analysis completed`);
-    console.log(`\n🎯 RECOMMENDED AGENT CONFIGURATION:`);
+    printSuccess('✅ Smart spawn analysis completed');
+    console.log('\n🎯 RECOMMENDED AGENT CONFIGURATION:');
     
     let totalRecommended = 0;
     recommendedAgents.forEach(agent => {
@@ -140,13 +140,13 @@ async function smartSpawnCommand(subArgs, flags) {
         totalRecommended += agent.count;
     });
     
-    console.log(`\n📊 SUMMARY:`);
+    console.log('\n📊 SUMMARY:');
     console.log(`  📝 Total recommended: ${totalRecommended} agents`);
     console.log(`  🔢 Max allowed: ${maxAgents} agents`);
     console.log(`  ✅ Configuration: ${totalRecommended <= maxAgents ? 'Within limits' : 'Exceeds limits - scaling down required'}`);
     
     if (totalRecommended > maxAgents) {
-        printWarning(`⚠️  Recommended configuration exceeds max agents. Consider increasing limit or simplifying requirements.`);
+        printWarning('⚠️  Recommended configuration exceeds max agents. Consider increasing limit or simplifying requirements.');
     }
 }
 
@@ -155,7 +155,7 @@ async function workflowSelectCommand(subArgs, flags) {
     const projectType = options['project-type'] || options.project || 'general';
     const priority = options.priority || 'balanced';
 
-    console.log(`🔄 Selecting optimal workflow configuration...`);
+    console.log('🔄 Selecting optimal workflow configuration...');
     console.log(`📁 Project type: ${projectType}`);
     console.log(`⚡ Priority: ${priority}`);
 
@@ -192,33 +192,33 @@ async function workflowSelectCommand(subArgs, flags) {
 
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    printSuccess(`✅ Workflow selection completed`);
+    printSuccess('✅ Workflow selection completed');
     console.log(`\n🔄 SELECTED WORKFLOW: ${projectType.toUpperCase()}`);
     console.log(`⏱️  Estimated duration: ${selectedWorkflow.duration}`);
     
-    console.log(`\n📋 WORKFLOW PHASES:`);
+    console.log('\n📋 WORKFLOW PHASES:');
     selectedWorkflow.phases.forEach((phase, index) => {
         console.log(`  ${index + 1}. ${phase.charAt(0).toUpperCase() + phase.slice(1)}`);
     });
     
-    console.log(`\n🤖 RECOMMENDED AGENTS:`);
+    console.log('\n🤖 RECOMMENDED AGENTS:');
     Object.entries(selectedWorkflow.agents).forEach(([type, count]) => {
         console.log(`  • ${type}: ${count} agent${count > 1 ? 's' : ''}`);
     });
     
-    console.log(`\n⚡ PRIORITY OPTIMIZATIONS:`);
+    console.log('\n⚡ PRIORITY OPTIMIZATIONS:');
     switch (priority) {
         case 'speed':
-            console.log(`  🚀 Speed-optimized: +50% agents, parallel execution`);
+            console.log('  🚀 Speed-optimized: +50% agents, parallel execution');
             break;
         case 'quality':
-            console.log(`  🎯 Quality-focused: +100% testing, code review stages`);
+            console.log('  🎯 Quality-focused: +100% testing, code review stages');
             break;
         case 'cost':
-            console.log(`  💰 Cost-efficient: Minimal agents, sequential execution`);
+            console.log('  💰 Cost-efficient: Minimal agents, sequential execution');
             break;
         default:
-            console.log(`  ⚖️  Balanced approach: Optimal speed/quality/cost ratio`);
+            console.log('  ⚖️  Balanced approach: Optimal speed/quality/cost ratio');
     }
     
     console.log(`\n📄 Workflow template saved for project: ${projectType}`);

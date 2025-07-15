@@ -839,7 +839,7 @@ export class ResourceManager extends EventEmitter {
     }
 
     if (pool.resources.length <= pool.scaling.minResources) {
-      throw new Error(`Cannot remove resource: pool would go below minimum size`);
+      throw new Error('Cannot remove resource: pool would go below minimum size');
     }
 
     pool.resources = pool.resources.filter(id => id !== resourceId);

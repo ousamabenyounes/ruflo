@@ -82,7 +82,7 @@ function testTabSwitching() {
     const tabContent = document.querySelector(`.neural-tab-content[data-tab="${tabName}"]`);
     
     if (!tabButton || !tabContent) {
-      logTest(`Tab "${tabName}" exists`, false, `Tab button or content not found`);
+      logTest(`Tab "${tabName}" exists`, false, 'Tab button or content not found');
       allTabsWork = false;
       return;
     }

@@ -221,7 +221,7 @@ export function createAgentCommand(): Command {
           }
         );
         
-        console.log(chalk.green(`✅ Agent created successfully!`));
+        console.log(chalk.green('✅ Agent created successfully!'));
         console.log(`Agent ID: ${chalk.bold(agentId)}`);
         
         // Add to pool if specified

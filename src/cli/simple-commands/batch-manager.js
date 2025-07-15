@@ -59,39 +59,39 @@ async function createInteractiveConfig(outputFile) {
   // This would require a proper CLI prompt library in a real implementation
   // For now, we'll create a comprehensive template with comments
   const config = {
-    "_comment": "Batch initialization configuration",
-    "_templates": Object.keys(PROJECT_TEMPLATES),
-    "_environments": Object.keys(ENVIRONMENT_CONFIGS),
+    '_comment': 'Batch initialization configuration',
+    '_templates': Object.keys(PROJECT_TEMPLATES),
+    '_environments': Object.keys(ENVIRONMENT_CONFIGS),
     
-    "baseOptions": {
-      "sparc": true,
-      "parallel": true,
-      "maxConcurrency": 5,
-      "force": false,
-      "minimal": false,
-      "progressTracking": true
+    'baseOptions': {
+      'sparc': true,
+      'parallel': true,
+      'maxConcurrency': 5,
+      'force': false,
+      'minimal': false,
+      'progressTracking': true
     },
     
-    "projects": {
-      "_simple_list": ["project1", "project2", "project3"],
-      "_or_use_projectConfigs_below": "for individual customization"
+    'projects': {
+      '_simple_list': ['project1', 'project2', 'project3'],
+      '_or_use_projectConfigs_below': 'for individual customization'
     },
     
-    "projectConfigs": {
-      "example-api": {
-        "template": "web-api",
-        "environment": "dev",
-        "customConfig": {
-          "database": "postgresql",
-          "auth": "jwt"
+    'projectConfigs': {
+      'example-api': {
+        'template': 'web-api',
+        'environment': 'dev',
+        'customConfig': {
+          'database': 'postgresql',
+          'auth': 'jwt'
         }
       },
-      "example-frontend": {
-        "template": "react-app", 
-        "environment": "dev",
-        "customConfig": {
-          "ui": "material-ui",
-          "state": "redux"
+      'example-frontend': {
+        'template': 'react-app', 
+        'environment': 'dev',
+        'customConfig': {
+          'ui': 'material-ui',
+          'state': 'redux'
         }
       }
     }
@@ -280,13 +280,13 @@ async function estimateBatchOperation(args, flags) {
     console.log(`⚡ Parallel Processing: ${parallel ? 'Enabled' : 'Disabled'}`);
     console.log(`🔄 Max Concurrency: ${maxConcurrency}`);
     console.log();
-    console.log(`⏱️  Estimated Time:`);
+    console.log('⏱️  Estimated Time:');
     console.log(`   Sequential: ~${Math.ceil(sequentialTime / 60)} minutes`);
     console.log(`   Parallel: ~${Math.ceil(parallelTime / 60)} minutes`);
     console.log(`   Time Savings: ${Math.ceil((sequentialTime - parallelTime) / 60)} minutes`);
     console.log();
-    console.log(`💾 Estimated Disk Usage:`);
-    console.log(`   Per Project: ~50-200 MB`);
+    console.log('💾 Estimated Disk Usage:');
+    console.log('   Per Project: ~50-200 MB');
     console.log(`   Total: ~${Math.ceil(totalEnvironments * 125 / 1024)} GB`);
     
   } catch (error) {

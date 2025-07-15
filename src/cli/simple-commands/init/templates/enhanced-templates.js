@@ -1226,55 +1226,55 @@ See full documentation in \`.claude/commands/\`
 function createEnhancedSettingsJsonFallback() {
   return JSON.stringify({
     env: {
-      CLAUDE_FLOW_AUTO_COMMIT: "false",
-      CLAUDE_FLOW_AUTO_PUSH: "false",
-      CLAUDE_FLOW_HOOKS_ENABLED: "true",
-      CLAUDE_FLOW_TELEMETRY_ENABLED: "true",
-      CLAUDE_FLOW_REMOTE_EXECUTION: "true",
-      CLAUDE_FLOW_GITHUB_INTEGRATION: "true"
+      CLAUDE_FLOW_AUTO_COMMIT: 'false',
+      CLAUDE_FLOW_AUTO_PUSH: 'false',
+      CLAUDE_FLOW_HOOKS_ENABLED: 'true',
+      CLAUDE_FLOW_TELEMETRY_ENABLED: 'true',
+      CLAUDE_FLOW_REMOTE_EXECUTION: 'true',
+      CLAUDE_FLOW_GITHUB_INTEGRATION: 'true'
     },
     permissions: {
       allow: [
-        "Bash(npx claude-flow *)",
-        "Bash(npm run lint)",
-        "Bash(npm run test:*)",
-        "Bash(npm test *)",
-        "Bash(git status)",
-        "Bash(git diff *)",
-        "Bash(git log *)",
-        "Bash(git add *)",
-        "Bash(git commit *)",
-        "Bash(git push)",
-        "Bash(git config *)",
-        "Bash(gh *)",
-        "Bash(node *)",
-        "Bash(which *)",
-        "Bash(pwd)",
-        "Bash(ls *)"
+        'Bash(npx claude-flow *)',
+        'Bash(npm run lint)',
+        'Bash(npm run test:*)',
+        'Bash(npm test *)',
+        'Bash(git status)',
+        'Bash(git diff *)',
+        'Bash(git log *)',
+        'Bash(git add *)',
+        'Bash(git commit *)',
+        'Bash(git push)',
+        'Bash(git config *)',
+        'Bash(gh *)',
+        'Bash(node *)',
+        'Bash(which *)',
+        'Bash(pwd)',
+        'Bash(ls *)'
       ],
       deny: [
-        "Bash(rm -rf /)",
-        "Bash(curl * | bash)",
-        "Bash(wget * | sh)",
-        "Bash(eval *)"
+        'Bash(rm -rf /)',
+        'Bash(curl * | bash)',
+        'Bash(wget * | sh)',
+        'Bash(eval *)'
       ]
     },
     hooks: {
       PreToolUse: [
         {
-          matcher: "Bash",
+          matcher: 'Bash',
           hooks: [
             {
-              type: "command",
+              type: 'command',
               command: "cat | jq -r '.tool_input.command // \"\"' | xargs -I {} npx claude-flow@alpha hooks pre-command --command \"{}\" --validate-safety true --prepare-resources true"
             }
           ]
         },
         {
-          matcher: "Write|Edit|MultiEdit",
+          matcher: 'Write|Edit|MultiEdit',
           hooks: [
             {
-              type: "command",
+              type: 'command',
               command: "cat | jq -r '.tool_input.file_path // .tool_input.path // \"\"' | xargs -I {} npx claude-flow@alpha hooks pre-edit --file \"{}\" --auto-assign-agents true --load-context true"
             }
           ]
@@ -1282,19 +1282,19 @@ function createEnhancedSettingsJsonFallback() {
       ],
       PostToolUse: [
         {
-          matcher: "Bash",
+          matcher: 'Bash',
           hooks: [
             {
-              type: "command",
+              type: 'command',
               command: "cat | jq -r '.tool_input.command // \"\"' | xargs -I {} npx claude-flow@alpha hooks post-command --command \"{}\" --track-metrics true --store-results true"
             }
           ]
         },
         {
-          matcher: "Write|Edit|MultiEdit",
+          matcher: 'Write|Edit|MultiEdit',
           hooks: [
             {
-              type: "command",
+              type: 'command',
               command: "cat | jq -r '.tool_input.file_path // .tool_input.path // \"\"' | xargs -I {} npx claude-flow@alpha hooks post-edit --file \"{}\" --format true --update-memory true --train-neural true"
             }
           ]
@@ -1304,22 +1304,22 @@ function createEnhancedSettingsJsonFallback() {
         {
           hooks: [
             {
-              type: "command",
-              command: "npx claude-flow@alpha hooks session-end --generate-summary true --persist-state true --export-metrics true"
+              type: 'command',
+              command: 'npx claude-flow@alpha hooks session-end --generate-summary true --persist-state true --export-metrics true'
             }
           ]
         }
       ]
     },
     mcpServers: {
-      "claude-flow": {
-        command: "npx",
-        args: ["claude-flow", "mcp", "start"],
+      'claude-flow': {
+        command: 'npx',
+        args: ['claude-flow', 'mcp', 'start'],
         env: {
-          CLAUDE_FLOW_HOOKS_ENABLED: "true",
-          CLAUDE_FLOW_TELEMETRY_ENABLED: "true",
-          CLAUDE_FLOW_REMOTE_READY: "true",
-          CLAUDE_FLOW_GITHUB_INTEGRATION: "true"
+          CLAUDE_FLOW_HOOKS_ENABLED: 'true',
+          CLAUDE_FLOW_TELEMETRY_ENABLED: 'true',
+          CLAUDE_FLOW_REMOTE_READY: 'true',
+          CLAUDE_FLOW_GITHUB_INTEGRATION: 'true'
         }
       }
     },
@@ -1336,11 +1336,11 @@ function createEnhancedSettingsJsonFallback() {
     },
     performance: {
       maxAgents: 10,
-      defaultTopology: "hierarchical",
-      executionStrategy: "parallel",
+      defaultTopology: 'hierarchical',
+      executionStrategy: 'parallel',
       tokenOptimization: true,
       cacheEnabled: true,
-      telemetryLevel: "detailed"
+      telemetryLevel: 'detailed'
     }
   }, null, 2);
 }

@@ -76,7 +76,7 @@ function startWebUI(host: string, port: number) {
   const activeConnections: Set<any> = new Set();
   
   // CLI output capture system
-  let cliProcess: any = null;
+  const cliProcess: any = null;
   
   const consoleHTML = `
     <!DOCTYPE html>
@@ -729,7 +729,7 @@ function startWebUI(host: string, port: number) {
     // Handle process exit
     child.on('close', (code) => {
       const exitMsg = code === 0 ? 
-        `<span class="success">Command completed successfully</span>` :
+        '<span class="success">Command completed successfully</span>' :
         `<span class="error">Command failed with exit code ${code}</span>`;
       
       broadcastToClients({

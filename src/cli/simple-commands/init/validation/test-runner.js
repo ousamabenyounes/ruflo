@@ -437,10 +437,10 @@ export class ValidationTestRunner {
   async createTestConfigs() {
     try {
       const testConfig = {
-        version: "1.0",
+        version: '1.0',
         modes: {
-          "test-mode": {
-            description: "Test mode for validation"
+          'test-mode': {
+            description: 'Test mode for validation'
           }
         }
       };

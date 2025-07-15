@@ -1310,7 +1310,7 @@ export class AnalyticsManager extends EventEmitter {
           insights.push({
             id: `perf-insight-${Date.now()}`,
             title: `Response time ${change > 0 ? 'increased' : 'decreased'} by ${Math.abs(change).toFixed(1)}%`,
-            description: `Response time has changed significantly in the recent period`,
+            description: 'Response time has changed significantly in the recent period',
             type: 'trend',
             category: 'performance',
             confidence: 80,

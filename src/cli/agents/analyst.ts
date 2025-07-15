@@ -63,9 +63,9 @@ interface DataAnalysis {
     duplicateRows: number;
     outliers: number;
   };
-  descriptiveStats: Record<string, any>;
-  correlations: Record<string, any>;
-  distributions: Record<string, any>;
+  descriptiveStats: Record<string, unknown>;
+  correlations: Record<string, unknown>;
+  distributions: Record<string, unknown>;
   insights: string[];
   recommendations: string[];
   visualizations: AnalysisVisualization[];
@@ -77,8 +77,8 @@ interface DataAnalysis {
 interface PerformanceAnalysis {
   system?: string;
   timeframe?: string;
-  metrics: Record<string, any>;
-  benchmarks?: Record<string, any>;
+  metrics: Record<string, unknown>;
+  benchmarks?: Record<string, unknown>;
   bottlenecks: AnalysisBottleneck[];
   anomalies: AnalysisAnomaly[];
   trends: AnalysisTrend[];
@@ -89,7 +89,7 @@ interface PerformanceAnalysis {
   projectedImprovement: number;
   confidence: number;
   timestamp: Date;
-  alertsTriggered?: any[];
+  alertsTriggered?: unknown[];
   slaCompliance?: {
     availability: number;
     responseTime: number;
@@ -575,7 +575,7 @@ export class AnalystAgent extends BaseAgent {
   }
 
   private async performStatisticalAnalysis(task: TaskDefinition): Promise<StatisticalAnalysis> {
-    const data = task.context?.data;
+    const _data = task.context?.data;
     const tests = task.context?.tests || ['normality', 'correlation', 'significance'];
     const alpha = task.context?.alpha || 0.05;
     const hypothesis = task.context?.hypothesis;
@@ -635,7 +635,7 @@ export class AnalystAgent extends BaseAgent {
   }
 
   private async createVisualization(task: TaskDefinition): Promise<VisualizationResult> {
-    const data = task.context?.data;
+    const _data = task.context?.data;
     const chartType = task.context?.type || 'auto';
     const style = task.context?.style || 'professional';
     const interactive = task.context?.interactive || false;

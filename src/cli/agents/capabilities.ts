@@ -356,7 +356,7 @@ export class AgentCapabilitySystem {
     } else if (score >= 50) {
       return `Partial match, missing key capabilities: ${missing.slice(0, 3).join(', ')}`;
     } else {
-      return `Poor match, significant capability gaps`;
+      return 'Poor match, significant capability gaps';
     }
   }
 

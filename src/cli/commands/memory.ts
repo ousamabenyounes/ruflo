@@ -16,7 +16,7 @@ interface MemoryEntry {
 }
 
 export class SimpleMemoryManager {
-  private filePath = "./memory/memory-store.json";
+  private filePath = './memory/memory-store.json';
   private data: Record<string, MemoryEntry[]> = {};
 
   async load() {
@@ -30,11 +30,11 @@ export class SimpleMemoryManager {
   }
 
   async save() {
-    await fs.mkdir("./memory", { recursive: true });
+    await fs.mkdir('./memory', { recursive: true });
     await fs.writeFile(this.filePath, JSON.stringify(this.data, null, 2));
   }
 
-  async store(key: string, value: string, namespace: string = "default") {
+  async store(key: string, value: string, namespace: string = 'default') {
     await this.load();
     
     if (!this.data[namespace]) {

@@ -1,4 +1,4 @@
-import { getErrorMessage } from '../utils/error-handler.js';
+import { getErrorMessage as _getErrorMessage } from '../utils/error-handler.js';
 /**
  * Enterprise Configuration Management for Claude-Flow
  * Features: Security masking, change tracking, multi-format support, credential management
@@ -90,7 +90,7 @@ const FORMAT_PARSERS: Record<string, FormatParser> = {
       // Simple YAML parser for basic key-value pairs
       const lines = content.split('\n');
       const result: any = {};
-      let current = result;
+      const current = result;
       const stack: any[] = [result];
       
       for (const line of lines) {

@@ -8,8 +8,8 @@ import { SwarmCoordinator } from '../../swarm/coordinator.js';
 import { TaskExecutor } from '../../swarm/executor.js';
 import { SwarmMemoryManager } from '../../swarm/memory.js';
 import { generateId } from '../../utils/helpers.js';
-import { success, error, warning, info } from "../cli-core.js";
-import type { CommandContext } from "../cli-core.js";
+import { success, error, warning, info } from '../cli-core.js';
+import type { CommandContext } from '../cli-core.js';
 import type { SwarmStrategy, SwarmMode, AgentType } from '../../swarm/types.js';
 import { spawn, execSync } from 'child_process';
 import * as readline from 'readline';
@@ -423,10 +423,10 @@ The swarm should be self-documenting - use memory_store to save all important in
   
   // If interactive mode, set up approval workflow
   if (options.interactive || options.approvalRequired) {
-    console.log(`\n📋 Interactive Approval Mode Enabled`);
+    console.log('\n📋 Interactive Approval Mode Enabled');
     console.log(`👤 Reviewer: ${options.reviewer}`);
-    console.log(`\n⚠️  Claude will present a plan before making any changes.`);
-    console.log(`You must explicitly approve with "APPROVED" or request modifications.\n`);
+    console.log('\n⚠️  Claude will present a plan before making any changes.');
+    console.log('You must explicitly approve with "APPROVED" or request modifications.\n');
   }
   
   // Launch Claude with the swarm prompt
@@ -463,7 +463,7 @@ export async function swarmAction(ctx: CommandContext) {
   const objective = ctx.args.join(' ').trim();
   
   if (!objective) {
-    error("Usage: swarm <objective>");
+    error('Usage: swarm <objective>');
     showSwarmHelp();
     return;
   }
@@ -683,7 +683,7 @@ export async function swarmAction(ctx: CommandContext) {
 
     // Execute the objective
     if (!isJsonOutput) {
-      console.log(`\n🚀 Swarm execution started...`);
+      console.log('\n🚀 Swarm execution started...');
     }
     
     // Start the objective execution
@@ -700,12 +700,12 @@ export async function swarmAction(ctx: CommandContext) {
         swarmId: coordinator.getSwarmId()
       }, null, 2));
       
-      console.log(`\n🌙 Running in background mode`);
+      console.log('\n🌙 Running in background mode');
       console.log(`📁 Results: ${swarmDir}`);
       
       // Wait for completion in background with minimal output
       if (!isJsonOutput) {
-        console.log(`\n⏳ Processing tasks...`);
+        console.log('\n⏳ Processing tasks...');
       }
       
       // Background mode uses simple polling, no detailed progress
@@ -721,7 +721,7 @@ export async function swarmAction(ctx: CommandContext) {
     } else if (!options.background) {
       // Wait for completion in foreground with detailed progress
       if (!options.verbose && !isJsonOutput) {
-        console.log(`\n⏳ Processing tasks...`);
+        console.log('\n⏳ Processing tasks...');
         
         // Track task states for detailed display
         let lastTaskUpdate = '';
@@ -777,7 +777,7 @@ export async function swarmAction(ctx: CommandContext) {
       
     } else {
       // Background mode requested - launch in background
-      console.log(`\n🌙 Launching swarm in background mode...`);
+      console.log('\n🌙 Launching swarm in background mode...');
       console.log(`📁 Results will be saved to: ${swarmDir}`);
       console.log(`📊 Monitor progress: claude-flow swarm status ${swarmId}`);
       
@@ -1319,8 +1319,8 @@ async function showSwarmResults(
   await fs.writeFile(`${swarmDir}/results.json`, JSON.stringify(results, null, 2));
   
   // Show summary
-  success(`\n✅ Swarm completed successfully!`);
-  console.log(`\n📊 Final Results:`);
+  success('\n✅ Swarm completed successfully!');
+  console.log('\n📊 Final Results:');
   console.log(`  • Objectives: ${swarmStatus.objectives}`);
   console.log(`  • Tasks Completed: ${swarmStatus.tasks.completed}`);
   console.log(`  • Tasks Failed: ${swarmStatus.tasks.failed}`);
@@ -1364,7 +1364,7 @@ async function showSwarmResults(
     await checkDir('./output').catch(() => {});
     
     if (createdFiles.length > 0) {
-      console.log(`\n📁 Files created:`);
+      console.log('\n📁 Files created:');
       createdFiles.forEach(file => {
         console.log(`  • ${file}`);
       });
@@ -1467,12 +1467,12 @@ function showDryRunConfiguration(swarmId: string, objective: string, options: an
   console.log(`📊 Quality Threshold: ${options.qualityThreshold}`);
   
   if (options.interactive || options.approvalRequired) {
-    console.log(`\n🔸 Interactive Approval:`);
+    console.log('\n🔸 Interactive Approval:');
     console.log(`  • Enabled: ${options.interactive || options.approvalRequired}`);
     console.log(`  • Reviewer: ${options.reviewer}`);
   }
   
-  console.log(`\n🎛️  Coordination Strategy:`);
+  console.log('\n🎛️  Coordination Strategy:');
   console.log(`  • Agent Selection: ${options.agentSelection}`);
   console.log(`  • Task Scheduling: ${options.taskScheduling}`);
   console.log(`  • Load Balancing: ${options.loadBalancing}`);

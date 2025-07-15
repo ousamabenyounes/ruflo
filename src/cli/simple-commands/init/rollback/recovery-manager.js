@@ -700,16 +700,16 @@ export class RecoveryManager {
 
     // Generate basic .roomodes content
     const basicRoomodes = {
-      version: "1.0",
+      version: '1.0',
       modes: {
         architect: {
-          description: "System design and architecture planning"
+          description: 'System design and architecture planning'
         },
         code: {
-          description: "Clean, modular code implementation"
+          description: 'Clean, modular code implementation'
         },
         tdd: {
-          description: "Test-driven development and testing"
+          description: 'Test-driven development and testing'
         }
       }
     };

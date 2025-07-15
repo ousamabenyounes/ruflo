@@ -6,7 +6,7 @@ import { getErrorMessage } from '../../utils/error-handler.js';
 import { generateId } from '../../utils/helpers.js';
 import { promises as fs } from 'node:fs';
 import { success, error, warning, info } from '../cli-core.js';
-import type { CommandContext } from "../cli-core.js";
+import type { CommandContext } from '../cli-core.js';
 import { BackgroundExecutor } from '../../coordination/background-executor.js';
 import { SwarmCoordinator } from '../../coordination/swarm-coordinator.js';
 import { SwarmMemoryManager } from '../../memory/swarm-memory.js';
@@ -21,11 +21,11 @@ export async function swarmAction(ctx: CommandContext) {
   const objective = ctx.args.join(' ').trim();
   
   if (!objective) {
-    error("Usage: swarm <objective>");
-    console.log("\nExamples:");
+    error('Usage: swarm <objective>');
+    console.log('\nExamples:');
     console.log('  claude-flow swarm "Build a REST API"');
     console.log('  claude-flow swarm "Research cloud architecture"');
-    console.log("\nOptions:");
+    console.log('\nOptions:');
     console.log('  --dry-run              Show configuration without executing');
     console.log('  --strategy <type>      Strategy: auto, research, development, analysis');
     console.log('  --max-agents <n>       Maximum number of agents (default: 5)');
@@ -192,7 +192,7 @@ export async function swarmAction(ctx: CommandContext) {
 
     // Start objective execution
     await coordinator.executeObjective(objectiveId);
-    console.log(`\n🚀 Swarm execution started...`);
+    console.log('\n🚀 Swarm execution started...');
 
     if (options.background) {
       console.log(`Running in background mode. Check status with: claude-flow swarm status ${swarmId}`);
@@ -216,7 +216,7 @@ export async function swarmAction(ctx: CommandContext) {
 
       // Show summary
       const swarmStatus = coordinator.getSwarmStatus();
-      console.log(`\n📊 Swarm Summary:`);
+      console.log('\n📊 Swarm Summary:');
       console.log(`  - Objectives: ${swarmStatus.objectives}`);
       console.log(`  - Tasks Completed: ${swarmStatus.tasks.completed}`);
       console.log(`  - Tasks Failed: ${swarmStatus.tasks.failed}`);
@@ -248,25 +248,25 @@ async function decomposeObjective(objective: string, options: any): Promise<any[
     case 'research':
       subtasks.push(
         { type: 'research', description: `Research background information on: ${objective}` },
-        { type: 'analysis', description: `Analyze findings and identify key patterns` },
-        { type: 'synthesis', description: `Synthesize research into actionable insights` }
+        { type: 'analysis', description: 'Analyze findings and identify key patterns' },
+        { type: 'synthesis', description: 'Synthesize research into actionable insights' }
       );
       break;
       
     case 'development':
       subtasks.push(
         { type: 'planning', description: `Plan architecture and design for: ${objective}` },
-        { type: 'implementation', description: `Implement core functionality` },
-        { type: 'testing', description: `Test and validate implementation` },
-        { type: 'documentation', description: `Document the solution` }
+        { type: 'implementation', description: 'Implement core functionality' },
+        { type: 'testing', description: 'Test and validate implementation' },
+        { type: 'documentation', description: 'Document the solution' }
       );
       break;
       
     case 'analysis':
       subtasks.push(
         { type: 'data-gathering', description: `Gather relevant data for: ${objective}` },
-        { type: 'analysis', description: `Perform detailed analysis` },
-        { type: 'visualization', description: `Create visualizations and reports` }
+        { type: 'analysis', description: 'Perform detailed analysis' },
+        { type: 'visualization', description: 'Create visualizations and reports' }
       );
       break;
       
@@ -275,20 +275,20 @@ async function decomposeObjective(objective: string, options: any): Promise<any[
       if (objective.toLowerCase().includes('build') || objective.toLowerCase().includes('create')) {
         subtasks.push(
           { type: 'planning', description: `Plan solution for: ${objective}` },
-          { type: 'implementation', description: `Implement the solution` },
-          { type: 'testing', description: `Test and validate` }
+          { type: 'implementation', description: 'Implement the solution' },
+          { type: 'testing', description: 'Test and validate' }
         );
       } else if (objective.toLowerCase().includes('research') || objective.toLowerCase().includes('analyze')) {
         subtasks.push(
           { type: 'research', description: `Research: ${objective}` },
-          { type: 'analysis', description: `Analyze findings` },
-          { type: 'report', description: `Generate report` }
+          { type: 'analysis', description: 'Analyze findings' },
+          { type: 'report', description: 'Generate report' }
         );
       } else {
         subtasks.push(
           { type: 'exploration', description: `Explore requirements for: ${objective}` },
-          { type: 'execution', description: `Execute main tasks` },
-          { type: 'validation', description: `Validate results` }
+          { type: 'execution', description: 'Execute main tasks' },
+          { type: 'validation', description: 'Validate results' }
         );
       }
   }
@@ -429,7 +429,7 @@ exit \${PIPESTATUS[0]}`;
       await fs.writeFile(wrapperPath, wrapperScript);
       await Deno.chmod(wrapperPath, 0o755);
       
-      console.log(`    ┌─ Claude Output ─────────────────────────────`);
+      console.log('    ┌─ Claude Output ─────────────────────────────');
       
       const command = new Deno.Command('bash', {
         args: [wrapperPath],
@@ -441,13 +441,13 @@ exit \${PIPESTATUS[0]}`;
         const process = command.spawn();
         const { code, success } = await process.status;
         
-        console.log(`    └─────────────────────────────────────────────`);
+        console.log('    └─────────────────────────────────────────────');
         
         if (!success) {
           throw new Error(`Claude exited with code ${code}`);
         }
         
-        console.log(`    ✓ Task completed`);
+        console.log('    ✓ Task completed');
         
       } catch (err) {
         throw err;

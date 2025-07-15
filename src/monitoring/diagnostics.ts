@@ -565,7 +565,7 @@ ${component.name}
       }
       
       if (component.issues.length > 0) {
-        text += `  Issues:\n`;
+        text += '  Issues:\n';
         component.issues.forEach(issue => {
           text += `    - ${issue.type}: ${issue.message}\n`;
           if (issue.recommendation) {
@@ -585,7 +585,7 @@ Memory Leaks: ${report.performance.memoryLeaks ? 'Detected' : 'None detected'}
 `;
 
     if (report.performance.bottlenecks.length > 0) {
-      text += `\nBottlenecks:\n`;
+      text += '\nBottlenecks:\n';
       report.performance.bottlenecks.forEach(bottleneck => {
         text += `  - ${bottleneck}\n`;
       });

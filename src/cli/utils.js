@@ -196,15 +196,15 @@ export async function loadConfig(path = 'claude-flow.config.json') {
       poolSize: 10,
       recycleAfter: 20,
       healthCheckInterval: 30000,
-      type: "auto"
+      type: 'auto'
     },
     orchestrator: {
       maxConcurrentTasks: 10,
       taskTimeout: 300000
     },
     memory: {
-      backend: "json",
-      path: "./memory/claude-flow-data.json"
+      backend: 'json',
+      path: './memory/claude-flow-data.json'
     }
   };
   
@@ -302,20 +302,20 @@ export async function callRuvSwarmMCP(tool, params = {}) {
     
     // Create JSON-RPC messages for ruv-swarm MCP
     const initMessage = {
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       id: 1,
-      method: "initialize",
+      method: 'initialize',
       params: {
-        protocolVersion: "2024-11-05",
+        protocolVersion: '2024-11-05',
         capabilities: { tools: {}, resources: {} },
-        clientInfo: { name: "claude-flow-cli", version: "2.0.0" }
+        clientInfo: { name: 'claude-flow-cli', version: '2.0.0' }
       }
     };
     
     const toolMessage = {
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       id: 2,
-      method: "tools/call",
+      method: 'tools/call',
       params: {
         name: tool,
         arguments: params
@@ -411,9 +411,9 @@ export async function callRuvSwarmDirectNeural(params = {}) {
     const epochs = params.epochs || 50;
     const dataSource = params.data || 'recent';
     
-    console.log(`🧠 Using REAL ruv-swarm WASM neural training...`);
+    console.log('🧠 Using REAL ruv-swarm WASM neural training...');
     console.log(`🚀 Executing: npx ruv-swarm neural train --model ${modelName} --iterations ${epochs} --data-source ${dataSource}`);
-    console.log(`📺 LIVE TRAINING OUTPUT:\n`);
+    console.log('📺 LIVE TRAINING OUTPUT:\n');
     
     // Use a different approach to show live output - spawn with stdio inheritance
     let result;

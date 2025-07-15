@@ -50,7 +50,7 @@ export const taskCommand = new Command()
     .description('Get task status')
     .argument('<task-id>', 'Task ID')
     .action(async (taskId: string, options: any) => {
-      console.log(chalk.yellow(`Task status requires a running Claude-Flow instance`));
+      console.log(chalk.yellow('Task status requires a running Claude-Flow instance'));
     })
   .command('cancel')
     .description('Cancel a task')

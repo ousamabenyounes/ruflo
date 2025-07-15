@@ -1,4 +1,4 @@
-import { printSuccess, printError, printWarning, trainNeuralModel, updateNeuralPattern, callRuvSwarmMCP, checkRuvSwarmAvailable } from "../utils.js";
+import { printSuccess, printError, printWarning, trainNeuralModel, updateNeuralPattern, callRuvSwarmMCP, checkRuvSwarmAvailable } from '../utils.js';
 
 export async function trainingAction(subArgs, flags) {
     const subcommand = subArgs[0];
@@ -35,7 +35,7 @@ async function neuralTrainCommand(subArgs, flags) {
     const model = options.model || 'general-predictor';
     const epochs = parseInt(options.epochs || '50');
 
-    console.log(`🧠 Starting neural training...`);
+    console.log('🧠 Starting neural training...');
     console.log(`📊 Data source: ${data}`);
     console.log(`🤖 Target model: ${model}`);
     console.log(`🔄 Training epochs: ${epochs}`);
@@ -48,23 +48,23 @@ async function neuralTrainCommand(subArgs, flags) {
     }
 
     try {
-        console.log(`\n🔄 Executing REAL ruv-swarm neural training with WASM acceleration...`);
+        console.log('\n🔄 Executing REAL ruv-swarm neural training with WASM acceleration...');
         console.log(`🎯 Model: ${model} | Data: ${data} | Epochs: ${epochs}`);
-        console.log(`🚀 This will use actual neural networks, not simulation!\n`);
+        console.log('🚀 This will use actual neural networks, not simulation!\n');
         
         // Use REAL ruv-swarm neural training - no artificial delays
         const trainingResult = await trainNeuralModel(model, data, epochs);
         
         if (trainingResult.success) {
             if (trainingResult.real_training) {
-                printSuccess(`✅ REAL neural training completed successfully with ruv-swarm WASM!`);
+                printSuccess('✅ REAL neural training completed successfully with ruv-swarm WASM!');
                 console.log(`🧠 WASM-accelerated training: ${trainingResult.wasm_accelerated ? 'ENABLED' : 'DISABLED'}`);
             } else {
-                printSuccess(`✅ Neural training completed successfully`);
+                printSuccess('✅ Neural training completed successfully');
             }
             
             console.log(`📈 Model '${model}' updated with ${data} data`);
-            console.log(`🧠 Training metrics:`);
+            console.log('🧠 Training metrics:');
             console.log(`  • Epochs completed: ${trainingResult.epochs || epochs}`);
             
             // Use real accuracy from ruv-swarm
@@ -79,10 +79,10 @@ async function neuralTrainCommand(subArgs, flags) {
             console.log(`  • Improvement rate: ${trainingResult.improvement_rate || (epochs > 100 ? 'converged' : 'improving')}`);
             
             if (trainingResult.real_training) {
-                console.log(`  • WASM acceleration: ✅ ENABLED`);
-                console.log(`  • Real neural training: ✅ CONFIRMED`);
+                console.log('  • WASM acceleration: ✅ ENABLED');
+                console.log('  • Real neural training: ✅ CONFIRMED');
                 if (trainingResult.ruv_swarm_output) {
-                    console.log(`  • ruv-swarm status: Training completed successfully`);
+                    console.log('  • ruv-swarm status: Training completed successfully');
                 }
             }
             
@@ -99,7 +99,7 @@ async function neuralTrainCommand(subArgs, flags) {
             console.log(`  Epoch ${i}/${epochs}: Training... (fallback mode)`);
             await new Promise(resolve => setTimeout(resolve, 200));
         }
-        printSuccess(`✅ Neural training completed (fallback mode)`);
+        printSuccess('✅ Neural training completed (fallback mode)');
     }
 }
 
@@ -108,7 +108,7 @@ async function patternLearnCommand(subArgs, flags) {
     const operation = options.operation || 'unknown';
     const outcome = options.outcome || 'success';
 
-    console.log(`🔍 Learning from operation pattern...`);
+    console.log('🔍 Learning from operation pattern...');
     console.log(`⚙️  Operation: ${operation}`);
     console.log(`📊 Outcome: ${outcome}`);
 
@@ -120,7 +120,7 @@ async function patternLearnCommand(subArgs, flags) {
     }
 
     try {
-        console.log(`\n🧠 Updating neural patterns with ruv-swarm...`);
+        console.log('\n🧠 Updating neural patterns with ruv-swarm...');
         
         // Use real ruv-swarm pattern learning
         const metadata = {
@@ -132,10 +132,10 @@ async function patternLearnCommand(subArgs, flags) {
         const patternResult = await updateNeuralPattern(operation, outcome, metadata);
         
         if (patternResult.success) {
-            printSuccess(`✅ Pattern learning completed`);
+            printSuccess('✅ Pattern learning completed');
             console.log(`🧠 Updated neural patterns for operation: ${operation}`);
             console.log(`📈 Outcome '${outcome}' integrated into prediction model`);
-            console.log(`🔍 Pattern insights:`);
+            console.log('🔍 Pattern insights:');
             console.log(`  • Confidence: ${patternResult.confidence || patternResult.pattern_confidence || '87.3%'}`);
             console.log(`  • Similar patterns: ${patternResult.similarPatterns || patternResult.patterns_detected?.coordination_patterns || '5'}`);
             console.log(`  • Prediction improvement: ${patternResult.improvement || '+12.5%'}`);
@@ -154,7 +154,7 @@ async function modelUpdateCommand(subArgs, flags) {
     const agentType = options['agent-type'] || options.agentType || 'general';
     const result = options['operation-result'] || options.result || 'success';
 
-    console.log(`🔄 Updating agent model...`);
+    console.log('🔄 Updating agent model...');
     console.log(`🤖 Agent type: ${agentType}`);
     console.log(`📊 Operation result: ${result}`);
 
@@ -166,7 +166,7 @@ async function modelUpdateCommand(subArgs, flags) {
     }
 
     try {
-        console.log(`\n🤖 Updating agent model with ruv-swarm...`);
+        console.log('\n🤖 Updating agent model with ruv-swarm...');
         
         // Use real ruv-swarm model update via learning adaptation
         const updateResult = await callRuvSwarmMCP('learning_adapt', {
@@ -179,10 +179,10 @@ async function modelUpdateCommand(subArgs, flags) {
         });
         
         if (updateResult.success) {
-            printSuccess(`✅ Model update completed`);
+            printSuccess('✅ Model update completed');
             console.log(`🧠 ${agentType} agent model updated with new insights`);
             console.log(`📈 Performance prediction improved based on: ${result}`);
-            console.log(`📊 Update metrics:`);
+            console.log('📊 Update metrics:');
             
             const adaptationResults = updateResult.adaptation_results || {};
             console.log(`  • Model version: ${adaptationResults.model_version || updateResult.modelVersion || 'v1.0'}`);
@@ -192,7 +192,7 @@ async function modelUpdateCommand(subArgs, flags) {
             console.log(`  • Confidence increase: ${adaptationResults.confidence_increase || '+8%'}`);
             
             if (updateResult.learned_patterns) {
-                console.log(`🎯 Learned patterns:`);
+                console.log('🎯 Learned patterns:');
                 updateResult.learned_patterns.forEach(pattern => {
                     console.log(`  • ${pattern}`);
                 });
@@ -202,15 +202,15 @@ async function modelUpdateCommand(subArgs, flags) {
         }
     } catch (err) {
         // Fallback to showing success with default metrics
-        printSuccess(`✅ Model update completed (using cached patterns)`);
+        printSuccess('✅ Model update completed (using cached patterns)');
         console.log(`🧠 ${agentType} agent model updated with new insights`);
         console.log(`📈 Performance prediction improved based on: ${result}`);
-        console.log(`📊 Update metrics:`);
-        console.log(`  • Model version: v1.0`);
-        console.log(`  • Performance delta: +5%`);
-        console.log(`  • Training samples: 250`);
-        console.log(`  • Accuracy improvement: +3%`);
-        console.log(`  • Confidence increase: +8%`);
+        console.log('📊 Update metrics:');
+        console.log('  • Model version: v1.0');
+        console.log('  • Performance delta: +5%');
+        console.log('  • Training samples: 250');
+        console.log('  • Accuracy improvement: +3%');
+        console.log('  • Confidence increase: +8%');
     }
 }
 

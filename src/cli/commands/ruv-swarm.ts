@@ -6,15 +6,15 @@ import { getErrorMessage } from '../../utils/error-handler.js';
  * package to enable advanced swarm coordination and neural capabilities.
  */
 
-import { success, error, warning, info } from "../cli-core.js";
-import type { CommandContext } from "../cli-core.js";
+import { success, error, warning, info } from '../cli-core.js';
+import type { CommandContext } from '../cli-core.js';
 import { getRuvSwarmConfigManager } from '../../config/ruv-swarm-config.js';
 import { execAsync } from '../../utils/helpers.js';
 import { Logger } from '../../core/logger.js';
 import { isRuvSwarmAvailable, initializeRuvSwarmIntegration } from '../../mcp/ruv-swarm-tools.js';
 
 // Create logger for CLI commands
-const logger = new Logger({ level: "info", format: "text", destination: "console" });
+const logger = new Logger({ level: 'info', format: 'text', destination: 'console' });
 
 /**
  * Main ruv-swarm command handler
@@ -256,7 +256,7 @@ async function handleSpawn(ctx: CommandContext) {
       try {
         const spawnData = JSON.parse(result.stdout);
         if (spawnData.success) {
-          success(`Agent spawned successfully!`);
+          success('Agent spawned successfully!');
           console.log(`  Agent ID: ${spawnData.data.agentId}`);
           if (spawnData.data.agentName) {
             console.log(`  Name: ${spawnData.data.agentName}`);

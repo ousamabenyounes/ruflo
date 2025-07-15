@@ -12,7 +12,7 @@ export async function hiveCommand(args, flags) {
   }
   
   console.log('🐝 Initializing Hive Mind...');
-  console.log(`👑 Queen Genesis coordinating...`);
+  console.log('👑 Queen Genesis coordinating...');
   console.log(`📋 Objective: ${objective}`);
   console.log(`🏗️ Topology: ${flags.topology || 'hierarchical'}`);
   console.log(`🗳️ Consensus: ${flags.consensus || 'quorum'}`);

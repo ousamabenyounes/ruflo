@@ -1,10 +1,10 @@
-import { getErrorMessage } from '../utils/error-handler.js';
+import { getErrorMessage as _getErrorMessage } from '../utils/error-handler.js';
 /**
  * JSON-based persistence layer for Claude-Flow
  */
 
-import { join } from "path";
-import { mkdir, access, readFile, writeFile } from "fs/promises";
+import { join } from 'path';
+import { mkdir, access, readFile, writeFile } from 'fs/promises';
 
 export interface PersistedAgent {
   id: string;
@@ -43,8 +43,8 @@ export class JsonPersistenceManager {
   private dataPath: string;
   private data: PersistenceData;
 
-  constructor(dataDir: string = "./memory") {
-    this.dataPath = join(dataDir, "claude-flow-data.json");
+  constructor(dataDir: string = './memory') {
+    this.dataPath = join(dataDir, 'claude-flow-data.json');
     this.data = {
       agents: [],
       tasks: [],
@@ -54,16 +54,16 @@ export class JsonPersistenceManager {
 
   async initialize(): Promise<void> {
     // Ensure directory exists
-    await mkdir(join(this.dataPath, ".."), { recursive: true });
+    await mkdir(join(this.dataPath, '..'), { recursive: true });
     
     // Load existing data if available
     try {
       await access(this.dataPath);
-      const content = await readFile(this.dataPath, "utf-8");
+      const content = await readFile(this.dataPath, 'utf-8');
       this.data = JSON.parse(content);
     } catch (error) {
       // File doesn't exist or can't be read, keep default empty data
-      console.error("Failed to load persistence data:", error);
+      console.error('Failed to load persistence data:', error);
     }
   }
 
