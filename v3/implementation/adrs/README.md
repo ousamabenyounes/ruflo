@@ -250,3 +250,176 @@ claude-flow shell               # Enter REPL
 > agent spawn coder
 > memory search "patterns"
 ```
+
+---
+
+## agentic-flow vs claude-flow Feature Comparison
+
+### Feature Matrix
+
+| Feature | agentic-flow | claude-flow | Integration Value |
+|---------|--------------|-------------|-------------------|
+| **Core Agent System** | | | |
+| Specialized Agents | 66+ | 15 (hierarchical) | 🟡 |
+| Agent Spawning | ✅ | ✅ | - |
+| Agent Pool/Scaling | ✅ | ✅ | - |
+| **Orchestration** | | | |
+| Swarm Coordination | ✅ | ✅ | - |
+| Hive-Mind Consensus | ❌ | ✅ | - |
+| Federation Hub | ✅ | ❌ | 🔴 High |
+| Ephemeral Agents | ✅ | ❌ | 🔴 High |
+| **Transport** | | | |
+| HTTP/SSE | ✅ | ✅ | - |
+| QUIC (UDP) | ✅ | ❌ | 🔴 High |
+| WebSocket | ✅ | ✅ | - |
+| **AI Providers** | | | |
+| Multi-Provider | ✅ | ✅ | - |
+| Model Optimization | ✅ | ❌ | 🔴 High |
+| Provider Fallback | ✅ | ❌ | 🔴 High |
+| Cost Tracking | ✅ | ❌ | 🟡 Medium |
+| Proxy Server | ✅ | ❌ | 🟡 Medium |
+| **Memory/Learning** | | | |
+| ReasoningBank (WASM) | ✅ | ❌ | 🔴 High |
+| Embeddings CLI | ✅ | ✅ | - |
+| HNSW Indexing | ✅ | ✅ | - |
+| Memory Persistence | ✅ | ✅ | - |
+| **DevOps** | | | |
+| Doctor Command | ❌ | ✅ | - |
+| Shell Completions | ❌ | ✅ | - |
+| Smart Errors | ❌ | ✅ | - |
+| Background Workers | ✅ | ✅ | - |
+| Worker Dispatch | ✅ | ❌ | 🟡 Medium |
+| **Security** | | | |
+| Security Scanning | ❌ | ✅ | - |
+| CVE Detection | ❌ | ✅ | - |
+| Claims/RBAC | ❌ | ✅ | - |
+| **Advanced** | | | |
+| Neural Patterns | ❌ | ✅ | - |
+| Self-Learning Hooks | ✅ | ✅ | - |
+| Deployment Mgmt | ❌ | ✅ | - |
+| Plugin System | ❌ | ✅ | - |
+
+### High-Value Integration Opportunities
+
+#### 🔴 Tier 1: Highest Impact (Unique to agentic-flow)
+
+**1. QUIC Transport (50-70% faster)**
+```bash
+# Integration target:
+claude-flow transport quic --port 4433
+claude-flow swarm start --transport quic  # 50-70% faster agent comms
+```
+
+**2. Federation Hub (Ephemeral Agents)**
+```bash
+# Integration target:
+claude-flow federation start --port 9443
+claude-flow federation spawn --tenant acme --lifetime 600
+```
+*Value: Agents die but memories persist → learning across agent generations*
+
+**3. Model Optimization (85% cost savings)**
+```bash
+# Integration target:
+claude-flow agent spawn -t coder --optimize --priority cost
+claude-flow providers optimize --task "Build API" --budget 0.01
+```
+
+**4. Provider Fallback (Enterprise resilience)**
+```bash
+# Integration target:
+claude-flow providers fallback configure --primary anthropic --fallback openrouter,onnx
+```
+
+**5. ReasoningBank (WASM Learning Memory)**
+```bash
+# Integration target:
+claude-flow reasoningbank store "pattern" --reasoning "..."
+claude-flow reasoningbank search "authentication patterns"
+```
+*Value: 10-100x faster reasoning pattern storage vs JSON*
+
+#### 🟡 Tier 2: Medium Impact
+
+| Feature | Description | Complexity |
+|---------|-------------|------------|
+| Proxy Server | Use any model with Claude Code via local proxy | 🟡 Medium |
+| Worker Dispatch | More granular worker control | 🟢 Low |
+| Embeddings Management | Better model management | 🟢 Low |
+
+### Integration Roadmap
+
+#### Phase 1: Quick Wins (1 week) → 9.3 → 9.5
+
+| Feature | Effort | Impact | Source |
+|---------|--------|--------|--------|
+| Model Optimization flags | 🟢 Low | 🔴 High | New command |
+| Provider fallback config | 🟢 Low | 🔴 High | New subcommand |
+| Embeddings download/benchmark | 🟢 Low | 🟡 Med | Enhance existing |
+
+```bash
+# After Phase 1:
+claude-flow agent spawn -t coder --optimize --priority cost
+claude-flow providers fallback configure --primary anthropic --fallback openrouter,onnx
+claude-flow embeddings download all-MiniLM-L6-v2
+```
+
+#### Phase 2: Core Integration (2-3 weeks) → 9.5 → 9.7
+
+| Feature | Effort | Impact | Source |
+|---------|--------|--------|--------|
+| Federation Hub | 🟡 Med | 🔴 High | Port from agentic-flow |
+| Ephemeral agents | 🟡 Med | 🔴 High | Part of federation |
+| Proxy server | 🟡 Med | 🟡 Med | Port from agentic-flow |
+| Worker dispatch triggers | 🟢 Low | 🟡 Med | Enhance daemon |
+
+```bash
+# After Phase 2:
+claude-flow federation start --port 9443
+claude-flow federation spawn --lifetime 300 --task "Quick analysis"
+claude-flow proxy start --provider openrouter
+claude-flow daemon dispatch security-audit
+```
+
+#### Phase 3: Advanced (4-6 weeks) → 9.7 → 9.9
+
+| Feature | Effort | Impact | Source |
+|---------|--------|--------|--------|
+| QUIC Transport | 🔴 High | 🔴 High | Port QUIC module |
+| ReasoningBank (WASM) | 🔴 High | 🔴 High | Port + WASM build |
+| 66 Agent configs | 🟡 Med | 🟡 Med | Copy + adapt |
+
+```bash
+# After Phase 3:
+claude-flow swarm start --transport quic  # 50-70% faster
+claude-flow reasoningbank store "pattern" --reasoning "..."
+claude-flow agent spawn -t security-analyst  # One of 66 types
+```
+
+### Recommended Integration Approach
+
+**Option A: Dependency Approach (Fastest)**
+```json
+// claude-flow/package.json
+{
+  "dependencies": {
+    "agentic-flow": "^2.0.3"
+  }
+}
+```
+
+**Option B: Port Code (More Control)**
+```bash
+# Copy specific modules:
+- agentic-flow/src/transport/quic.ts → claude-flow/src/transport/
+- agentic-flow/src/federation/ → claude-flow/src/federation/
+- agentic-flow/src/reasoningbank/ → claude-flow/src/reasoningbank/
+```
+
+**Option C: Unified Package (Long-term)**
+```bash
+@claude-flow/core      # Shared primitives
+@claude-flow/cli       # CLI (current)
+@claude-flow/agents    # From agentic-flow's 66 agents
+@claude-flow/transport # QUIC + HTTP + WebSocket
+```
