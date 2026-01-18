@@ -122,7 +122,6 @@ export class SummaryCompression implements CompressionStrategy {
   private summarizeToolResult(content: string): string {
     try {
       const parsed = JSON.parse(content);
-      const keys = Object.keys(parsed);
       const summary: string[] = [`Tool: ${parsed.tool || 'unknown'}`];
 
       if (parsed.matches && Array.isArray(parsed.matches)) {
