@@ -896,15 +896,6 @@ export class CacheOptimizer {
     return false;
   }
 
-  private async _proactivePrune(_incomingTokens: number): Promise<void> {
-    const release = await this.mutex.acquire();
-    try {
-      await this.proactivePruneInternal(_incomingTokens, 'proactive');
-    } finally {
-      release();
-    }
-  }
-
   private async proactivePruneInternal(_incomingTokens: number, sessionId: string): Promise<void> {
     const context: ScoringContext = {
       currentQuery: '',
