@@ -115,7 +115,8 @@ session_end() {
 
   if [ $? -eq 0 ]; then
     # Save export
-    echo "$export_result" > "$LEARNING_DIR/session-export-$(date +%Y%m%d_%H%M%S).json"
+    local export_ts=$(get_file_timestamp)
+    echo "$export_result" > "$LEARNING_DIR/session-export-${export_ts}.json"
 
     local patterns=$(echo "$export_result" | grep -o '"patterns":[0-9]*' | cut -d: -f2)
     log "Session exported: $patterns patterns"
