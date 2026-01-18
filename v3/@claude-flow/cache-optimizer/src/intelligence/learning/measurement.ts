@@ -156,7 +156,7 @@ export class MeasurementCollector {
   private snapshots: MetricSnapshot[] = [];
   private sessionId: string;
   private startTime: number;
-  private lastCollectionTime = 0;
+  public lastCollectionTime = 0;
 
   // Counters for rate metrics
   private counters = {
