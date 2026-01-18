@@ -39,6 +39,7 @@
 
 export { MemoryInterceptorServer, startInterceptor, type InterceptorConfig } from './server.js';
 export { SQLiteBackend, type SQLiteBackendOptions } from './backends/sqlite.js';
+export { SessionPrunerServer, findCurrentSession, pruneSession } from './session-pruner.js';
 export type {
   MemoryBackend,
   MemoryEntry,
