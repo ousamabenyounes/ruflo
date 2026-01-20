@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
   executeInit,
+  executeUpgrade,
   DEFAULT_INIT_OPTIONS,
   MINIMAL_INIT_OPTIONS,
   FULL_INIT_OPTIONS,
