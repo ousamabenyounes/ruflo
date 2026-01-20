@@ -407,6 +407,219 @@ function getSystemMetrics() {
   };
 }
 
+// Get ADR (Architecture Decision Records) status
+function getADRStatus() {
+  const adrPaths = [
+    path.join(process.cwd(), 'docs', 'adrs'),
+    path.join(process.cwd(), 'docs', 'adr'),
+    path.join(process.cwd(), 'adr'),
+    path.join(process.cwd(), 'ADR'),
+    path.join(process.cwd(), '.claude-flow', 'adrs'),
+  ];
+
+  let count = 0;
+  let implemented = 0;
+
+  for (const adrPath of adrPaths) {
+    if (fs.existsSync(adrPath)) {
+      try {
+        const files = fs.readdirSync(adrPath).filter(f =>
+          f.endsWith('.md') && (f.startsWith('ADR-') || f.startsWith('adr-') || /^\\d{4}-/.test(f))
+        );
+        count = files.length;
+
+        // Check for implemented status in ADR files
+        for (const file of files) {
+          try {
+            const content = fs.readFileSync(path.join(adrPath, file), 'utf-8');
+            if (content.includes('Status: Implemented') || content.includes('status: implemented') ||
+                content.includes('Status: Accepted') || content.includes('status: accepted')) {
+              implemented++;
+            }
+          } catch (e) {
+            // Skip unreadable files
+          }
+        }
+        break;
+      } catch (e) {
+        // Ignore
+      }
+    }
+  }
+
+  return { count, implemented };
+}
+
+// Get hooks status (enabled/registered hooks)
+function getHooksStatus() {
+  let enabled = 0;
+  let total = 17; // V3 has 17 hook types
+
+  // Check .claude/settings.json for hooks config
+  const settingsPaths = [
+    path.join(process.cwd(), '.claude', 'settings.json'),
+    path.join(process.cwd(), '.claude', 'settings.local.json'),
+  ];
+
+  for (const settingsPath of settingsPaths) {
+    if (fs.existsSync(settingsPath)) {
+      try {
+        const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+        if (settings.hooks) {
+          // Count enabled hooks
+          const hookTypes = Object.keys(settings.hooks);
+          enabled = hookTypes.filter(h => {
+            const hook = settings.hooks[h];
+            return hook && (hook.enabled !== false) && (hook.command || hook.script);
+          }).length;
+        }
+        break;
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+  }
+
+  // Also check for hook files in .claude/hooks
+  const hooksDir = path.join(process.cwd(), '.claude', 'hooks');
+  if (fs.existsSync(hooksDir)) {
+    try {
+      const hookFiles = fs.readdirSync(hooksDir).filter(f => f.endsWith('.js') || f.endsWith('.sh'));
+      enabled = Math.max(enabled, hookFiles.length);
+    } catch (e) {
+      // Ignore
+    }
+  }
+
+  return { enabled, total };
+}
+
+// Get AgentDB memory stats
+function getAgentDBStats() {
+  let vectorCount = 0;
+  let dbSizeKB = 0;
+  let namespaces = 0;
+
+  const dbPaths = [
+    path.join(process.cwd(), '.claude-flow', 'agentdb'),
+    path.join(process.cwd(), '.swarm', 'agentdb'),
+    path.join(process.cwd(), 'data', 'agentdb'),
+    path.join(process.cwd(), '.claude', 'memory'),
+  ];
+
+  for (const dbPath of dbPaths) {
+    if (fs.existsSync(dbPath)) {
+      try {
+        const stats = fs.statSync(dbPath);
+        if (stats.isDirectory()) {
+          // Count database files and estimate vectors
+          const files = fs.readdirSync(dbPath);
+          namespaces = files.filter(f => f.endsWith('.db') || f.endsWith('.sqlite')).length;
+
+          // Calculate total size
+          for (const file of files) {
+            const filePath = path.join(dbPath, file);
+            const fileStat = fs.statSync(filePath);
+            if (fileStat.isFile()) {
+              dbSizeKB += fileStat.size / 1024;
+            }
+          }
+
+          // Estimate vector count (~0.5KB per vector on average)
+          vectorCount = Math.floor(dbSizeKB / 0.5);
+        } else {
+          // Single file database
+          dbSizeKB = stats.size / 1024;
+          vectorCount = Math.floor(dbSizeKB / 0.5);
+          namespaces = 1;
+        }
+        break;
+      } catch (e) {
+        // Ignore
+      }
+    }
+  }
+
+  // Also check for vectors.json (simple vector store)
+  const vectorsPath = path.join(process.cwd(), '.claude-flow', 'vectors.json');
+  if (fs.existsSync(vectorsPath) && vectorCount === 0) {
+    try {
+      const data = JSON.parse(fs.readFileSync(vectorsPath, 'utf-8'));
+      if (Array.isArray(data)) {
+        vectorCount = data.length;
+      } else if (data.vectors) {
+        vectorCount = Object.keys(data.vectors).length;
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }
+
+  return { vectorCount, dbSizeKB: Math.floor(dbSizeKB), namespaces };
+}
+
+// Get test statistics
+function getTestStats() {
+  let testFiles = 0;
+  let testCases = 0;
+
+  const testDirs = [
+    path.join(process.cwd(), 'tests'),
+    path.join(process.cwd(), 'test'),
+    path.join(process.cwd(), '__tests__'),
+    path.join(process.cwd(), 'src', '__tests__'),
+    path.join(process.cwd(), 'v3', '__tests__'),
+  ];
+
+  // Recursively count test files
+  function countTestFiles(dir, depth = 0) {
+    if (depth > 3) return; // Limit recursion
+    if (!fs.existsSync(dir)) return;
+
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
+          countTestFiles(path.join(dir, entry.name), depth + 1);
+        } else if (entry.isFile()) {
+          const name = entry.name;
+          if (name.includes('.test.') || name.includes('.spec.') ||
+              name.includes('_test.') || name.includes('_spec.') ||
+              name.startsWith('test_') || name.startsWith('spec_')) {
+            testFiles++;
+
+            // Try to estimate test cases from file
+            try {
+              const content = fs.readFileSync(path.join(dir, name), 'utf-8');
+              // Count it(), test(), describe() patterns
+              const itMatches = (content.match(/\\bit\\s*\\(/g) || []).length;
+              const testMatches = (content.match(/\\btest\\s*\\(/g) || []).length;
+              testCases += itMatches + testMatches;
+            } catch (e) {
+              // Estimate 3 tests per file if can't read
+              testCases += 3;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }
+
+  for (const dir of testDirs) {
+    countTestFiles(dir);
+  }
+
+  // Also check src directory for colocated tests
+  const srcDir = path.join(process.cwd(), 'src');
+  if (fs.existsSync(srcDir)) {
+    countTestFiles(srcDir);
+  }
+
+  return { testFiles, testCases };
+}
+
 // Generate progress bar
 function progressBar(current, total) {
   const width = 5;
