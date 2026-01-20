@@ -492,7 +492,7 @@ class BrowserMemoryManager {
 ---
 
 <details>
-<summary><h2>🧪 Testing</h2></summary>
+<summary><strong>🧪 Testing</strong></summary>
 
 ### Unit Tests
 
