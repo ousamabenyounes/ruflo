@@ -3553,7 +3553,7 @@ const config = optimizer.getOptimalConfig(agentCount);
 ---
 
 <details>
-<summary><h2>🥋 Agentic-Jujutsu — Quantum-Ready AI Version Control</h2></summary>
+<summary>🥋 <strong>Agentic-Jujutsu</strong> — Quantum-Ready AI Version Control</summary>
 
 [![npm version](https://img.shields.io/npm/v/agentic-jujutsu?color=blue&label=npm)](https://www.npmjs.com/package/agentic-jujutsu)
 [![npm downloads](https://img.shields.io/npm/dm/agentic-jujutsu?color=green)](https://www.npmjs.com/package/agentic-jujutsu)
