@@ -21,7 +21,7 @@
 // Core Plugin Export
 // ============================================================================
 
-export { PrimeRadiantPlugin } from './plugin';
+export { PrimeRadiantPlugin } from './plugin.js';
 
 // ============================================================================
 // WASM Bridge Export
