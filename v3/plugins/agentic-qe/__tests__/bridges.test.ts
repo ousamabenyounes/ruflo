@@ -162,12 +162,18 @@ class MockQESecurityBridge {
     }
 
     // Check for dangerous patterns
-    const dangerousPatterns = ['rm -rf', 'chmod 777', '> /dev', 'curl | bash'];
+    const dangerousPatterns = ['rm -rf', 'chmod 777', '> /dev'];
     for (const pattern of dangerousPatterns) {
       if (command.includes(pattern)) {
         violations.push(`Dangerous command pattern: ${pattern}`);
         riskLevel = 'critical';
       }
+    }
+
+    // Check for pipe to shell patterns (more flexible regex)
+    if (/\|\s*(bash|sh|zsh)/.test(command)) {
+      violations.push('Dangerous pipe to shell detected');
+      riskLevel = 'critical';
     }
 
     return {
