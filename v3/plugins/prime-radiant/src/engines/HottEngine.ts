@@ -339,8 +339,8 @@ export class HottEngine implements IHottEngine {
     const match = proof.match(/^(\w+)\((.*)\)$/);
     if (match) {
       return {
-        constructor: match[1],
-        args: this.parseArgs(match[2])
+        constructor: match[1] ?? 'var',
+        args: this.parseArgs(match[2] ?? '')
       };
     }
 
