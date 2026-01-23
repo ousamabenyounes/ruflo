@@ -316,14 +316,16 @@ export class HottEngine implements IHottEngine {
     // Simple parsing: A = B, forall x:T. P, exists x:T. P
     const eqMatch = prop.match(/(.+)\s*=\s*(.+)/);
     if (eqMatch) {
-      return { type: 'eq', args: [eqMatch[1].trim(), eqMatch[2].trim()] };
+      const arg1 = eqMatch[1]?.trim() ?? '';
+      const arg2 = eqMatch[2]?.trim() ?? '';
+      return { type: 'eq', args: [arg1, arg2] };
     }
 
     const forallMatch = prop.match(/forall\s+(\w+)\s*:\s*(\w+)\s*\.\s*(.+)/);
     if (forallMatch) {
       return {
         type: 'forall',
-        args: [forallMatch[1], forallMatch[2], forallMatch[3]]
+        args: [forallMatch[1] ?? '', forallMatch[2] ?? '', forallMatch[3] ?? '']
       };
     }
 
