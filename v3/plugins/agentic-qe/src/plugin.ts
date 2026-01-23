@@ -1162,7 +1162,7 @@ export class AQEPlugin implements IPlugin {
 
   private async handleValidateContract(
     input: unknown,
-    context: IPluginContext
+    _context: IPluginContext
   ): Promise<MCPToolResult> {
     const result = {
       status: 'success',
