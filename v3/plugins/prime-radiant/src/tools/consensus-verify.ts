@@ -134,7 +134,8 @@ function computeVoteAgreement(agentStates: AgentState[]): number {
   }
 
   // Agreement is based on majority
-  const maxCount = Math.max(...voteCounts.values());
+  const values = Array.from(voteCounts.values());
+  const maxCount = values.length > 0 ? Math.max(...values) : 0;
   return maxCount / votes.length;
 }
 
