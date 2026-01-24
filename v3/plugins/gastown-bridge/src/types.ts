@@ -834,15 +834,15 @@ export interface IGasTownBridge {
   showBead(beadId: string): Promise<{ bead: Bead; dependencies: string[]; dependents: string[] }>;
   manageDependency(action: DepAction, child: string, parent: string): Promise<void>;
   createConvoy(opts: CreateConvoyOptions): Promise<Convoy>;
-  getConvoyStatus(convoyId: string, detailed?: boolean): Promise<ConvoyStatus>;
+  getConvoyStatus(convoyId?: string, detailed?: boolean): Promise<Convoy[]>;
   trackConvoy(convoyId: string, action: 'add' | 'remove', issues: string[]): Promise<void>;
-  listFormulas(type?: FormulaType, includeBuiltin?: boolean): Promise<Formula[]>;
+  listFormulas(type?: FormulaType, includeBuiltin?: boolean): Promise<Array<{ name: string; type: FormulaType; description: string; builtin: boolean }>>;
   cookFormula(formula: Formula | string, vars: Record<string, string>): Promise<CookedFormula>;
-  executeFormula(formula: Formula | string, vars: Record<string, string>, targetAgent?: string, dryRun?: boolean): Promise<unknown>;
-  createFormula(opts: { name: string; type: FormulaType; content: string }): Promise<Formula>;
+  executeFormula(formula: Formula | string, vars: Record<string, string>, targetAgent?: string, dryRun?: boolean): Promise<{ beads_created: string[] }>;
+  createFormula(opts: { name: string; type: FormulaType; steps?: Step[]; vars?: Record<string, unknown>; description?: string }): Promise<{ path: string }>;
   sling(beadId: string, target: SlingTarget, formula?: string, priority?: number): Promise<void>;
   listAgents(rig?: string, role?: AgentRole, includeInactive?: boolean): Promise<GasTownAgent[]>;
-  sendMail(to: string, subject: string, body: string): Promise<{ messageId: string; status: string }>;
+  sendMail(to: string, subject: string, body: string): Promise<string>;
   readMail(mailId: string): Promise<GasTownMail>;
   listMail(limit?: number): Promise<GasTownMail[]>;
 }
