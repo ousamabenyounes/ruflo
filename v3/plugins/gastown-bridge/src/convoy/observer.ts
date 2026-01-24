@@ -29,6 +29,12 @@ import { BdBridge } from '../bridges/bd-bridge.js';
 import { ConvoyTracker } from './tracker.js';
 import { ConvoyError, GasTownErrorCode, GasTownError } from '../errors.js';
 import { LRUCache, DebouncedEmitter, BatchDeduplicator } from '../cache.js';
+import {
+  beadPool,
+  PooledBead,
+  LazyObserver,
+  type LazyStats,
+} from '../memory/index.js';
 
 // ============================================================================
 // Types
