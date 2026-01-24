@@ -525,6 +525,7 @@ export class FinancialEconomyBridge implements EconomyBridge {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private scaleReturns(returns: number[], days: number): number[] {
     if (days === 1) return returns;
 
