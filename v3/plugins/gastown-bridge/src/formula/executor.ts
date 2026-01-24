@@ -751,6 +751,7 @@ export class FormulaExecutor extends EventEmitter {
    * Generate molecules from a cooked formula
    *
    * Molecules are executable work units derived from formula steps/legs.
+   * Uses object pooling for reduced allocations.
    *
    * @param cookedFormula - The cooked formula to generate molecules from
    * @returns Array of molecules
@@ -771,22 +772,40 @@ export class FormulaExecutor extends EventEmitter {
         const moleculeId = `mol-${cookedFormula.name}-${leg.id}-${randomUUID().slice(0, 8)}`;
         moleculeIdMap.set(leg.id, moleculeId);
 
-        const molecule: Molecule = {
-          id: moleculeId,
-          formulaName: cookedFormula.name,
-          title: leg.title,
-          description: leg.description,
-          type: cookedFormula.type,
-          sourceId: leg.id,
-          agent: leg.agent,
-          dependencies: i > 0 ? [moleculeIdMap.get(orderedLegs[i - 1].id)!] : [],
-          order: i,
-          metadata: {
-            focus: leg.focus,
-            legOrder: leg.order,
-          },
-          createdAt: new Date(),
+        // Use pooled molecule for reduced allocations
+        const pooledMol = moleculePool.acquire() as PooledMolecule;
+        pooledMol.id = moleculeId;
+        pooledMol.formulaName = cookedFormula.name;
+        pooledMol.title = leg.title;
+        pooledMol.description = leg.description;
+        pooledMol.type = cookedFormula.type;
+        pooledMol.sourceId = leg.id;
+        pooledMol.agent = leg.agent;
+        pooledMol.dependencies = i > 0 ? [moleculeIdMap.get(orderedLegs[i - 1].id)!] : [];
+        pooledMol.order = i;
+        pooledMol.metadata = {
+          focus: leg.focus,
+          legOrder: leg.order,
         };
+        pooledMol.createdAt = new Date();
+
+        // Create plain molecule for return (avoid pool reference issues)
+        const molecule: Molecule = {
+          id: pooledMol.id,
+          formulaName: pooledMol.formulaName,
+          title: pooledMol.title,
+          description: pooledMol.description,
+          type: pooledMol.type,
+          sourceId: pooledMol.sourceId,
+          agent: pooledMol.agent,
+          dependencies: [...pooledMol.dependencies],
+          order: pooledMol.order,
+          metadata: { ...pooledMol.metadata },
+          createdAt: pooledMol.createdAt,
+        };
+
+        // Release pooled molecule back to pool
+        moleculePool.release(pooledMol);
 
         molecules.push(molecule);
         this.emit('molecule:created', molecule);
@@ -811,23 +830,41 @@ export class FormulaExecutor extends EventEmitter {
           }
         }
 
-        const molecule: Molecule = {
-          id: moleculeId,
-          formulaName: cookedFormula.name,
-          title: step.title,
-          description: step.description,
-          type: cookedFormula.type,
-          sourceId: step.id,
-          agent: undefined, // Steps don't have agent assignment by default
-          dependencies,
-          order: i,
-          metadata: {
-            duration: step.duration,
-            requires: step.requires,
-            ...step.metadata,
-          },
-          createdAt: new Date(),
+        // Use pooled molecule for reduced allocations
+        const pooledMol = moleculePool.acquire() as PooledMolecule;
+        pooledMol.id = moleculeId;
+        pooledMol.formulaName = cookedFormula.name;
+        pooledMol.title = step.title;
+        pooledMol.description = step.description;
+        pooledMol.type = cookedFormula.type;
+        pooledMol.sourceId = step.id;
+        pooledMol.agent = undefined;
+        pooledMol.dependencies = dependencies;
+        pooledMol.order = i;
+        pooledMol.metadata = {
+          duration: step.duration,
+          requires: step.requires,
+          ...step.metadata,
         };
+        pooledMol.createdAt = new Date();
+
+        // Create plain molecule for return (avoid pool reference issues)
+        const molecule: Molecule = {
+          id: pooledMol.id,
+          formulaName: pooledMol.formulaName,
+          title: pooledMol.title,
+          description: pooledMol.description,
+          type: pooledMol.type,
+          sourceId: pooledMol.sourceId,
+          agent: pooledMol.agent,
+          dependencies: [...pooledMol.dependencies],
+          order: pooledMol.order,
+          metadata: { ...pooledMol.metadata },
+          createdAt: pooledMol.createdAt,
+        };
+
+        // Release pooled molecule back to pool
+        moleculePool.release(pooledMol);
 
         molecules.push(molecule);
         this.emit('molecule:created', molecule);
