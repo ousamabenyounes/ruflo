@@ -18,6 +18,45 @@
 import { z } from 'zod';
 import { BdBridge, createBdBridge, type Bead, type BeadType, type BdBridgeConfig } from './bd-bridge.js';
 
+import {
+  LRUCache,
+  BatchDeduplicator,
+} from '../cache.js';
+
+// ============================================================================
+// Performance Caches
+// ============================================================================
+
+/** Cache for AgentDB lookups during sync */
+const agentDBLookupCache = new LRUCache<string, AgentDBEntry | null>({
+  maxEntries: 500,
+  ttlMs: 30 * 1000, // 30 sec TTL
+});
+
+/** Cache for conflict detection results */
+const conflictCache = new LRUCache<string, boolean>({
+  maxEntries: 200,
+  ttlMs: 10 * 1000, // 10 sec TTL
+});
+
+/** Deduplicator for concurrent sync operations */
+const syncDedup = new BatchDeduplicator<SyncResult>();
+
+/**
+ * FNV-1a hash for cache keys
+ */
+function hashKey(parts: string[]): string {
+  let hash = 2166136261;
+  for (const part of parts) {
+    for (let i = 0; i < part.length; i++) {
+      hash ^= part.charCodeAt(i);
+      hash = (hash * 16777619) >>> 0;
+    }
+    hash ^= 0xff;
+  }
+  return hash.toString(36);
+}
+
 // ============================================================================
 // Zod Validation Schemas
 // ============================================================================
