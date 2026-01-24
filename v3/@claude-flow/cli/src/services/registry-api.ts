@@ -143,7 +143,7 @@ export async function getBulkRatings(
     throw new Error('Failed to get bulk ratings');
   }
 
-  return response.json();
+  return response.json() as Promise<BulkRatingsResponse>;
 }
 
 /**
