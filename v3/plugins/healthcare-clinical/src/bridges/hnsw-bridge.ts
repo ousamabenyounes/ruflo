@@ -66,7 +66,10 @@ export class PatientEmbeddingGenerator {
       const hash = this.hashCode(diagnosis);
       const indices = this.getIndicesFromHash(hash, 10);
       for (const idx of indices) {
-        embedding[idx] += 1.0;
+        const current = embedding[idx];
+        if (current !== undefined) {
+          embedding[idx] = current + 1.0;
+        }
       }
     }
 
