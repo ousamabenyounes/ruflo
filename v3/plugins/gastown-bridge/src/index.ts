@@ -1356,13 +1356,8 @@ export class GasTownBridgePlugin extends EventEmitter implements IPlugin {
       },
       async createConvoy(opts) {
         if (!tracker) throw new GasTownError('ConvoyTracker not initialized', GasTownErrorCode.NOT_INITIALIZED);
-        // CreateConvoyOptions uses issues, tracker uses trackedIssues
-        return tracker.create({
-          name: opts.name,
-          issues: opts.issues,
-          description: opts.description,
-          formula: opts.formula,
-        });
+        // ConvoyTracker.create takes (name, issues, description) as separate arguments
+        return tracker.create(opts.name, opts.issues, opts.description);
       },
       async getConvoyStatus(convoyId, _detailed) {
         if (!tracker) throw new GasTownError('ConvoyTracker not initialized', GasTownErrorCode.NOT_INITIALIZED);
