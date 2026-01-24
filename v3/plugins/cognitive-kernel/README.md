@@ -1,5 +1,9 @@
 # @claude-flow/plugin-cognitive-kernel
 
+[![npm version](https://img.shields.io/npm/v/@claude-flow/plugin-cognitive-kernel.svg)](https://www.npmjs.com/package/@claude-flow/plugin-cognitive-kernel)
+[![license](https://img.shields.io/npm/l/@claude-flow/plugin-cognitive-kernel.svg)](https://github.com/ruvnet/claude-flow/blob/main/LICENSE)
+[![downloads](https://img.shields.io/npm/dm/@claude-flow/plugin-cognitive-kernel.svg)](https://www.npmjs.com/package/@claude-flow/plugin-cognitive-kernel)
+
 A cutting-edge cognitive augmentation plugin combining the Cognitum Gate Kernel with SONA self-optimizing architecture to provide LLMs with enhanced cognitive capabilities. The plugin enables dynamic working memory, attention control mechanisms, meta-cognitive self-monitoring, and cognitive scaffolding while maintaining low latency through WASM acceleration.
 
 ## Installation
@@ -13,7 +17,7 @@ npm install @claude-flow/plugin-cognitive-kernel
 ### CLI
 
 ```bash
-npx @claude-flow/cli@latest plugins install @claude-flow/plugin-cognitive-kernel
+npx claude-flow plugins install --name @claude-flow/plugin-cognitive-kernel
 ```
 
 ## Quick Start
