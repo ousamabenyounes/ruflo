@@ -30,7 +30,7 @@ import {
   ConvoySchema,
   CreateConvoyOptionsSchema,
 } from '../types.js';
-import { BdBridge, BeadQuery } from '../bridges/bd-bridge.js';
+import { BdBridge, type BeadQuery } from '../bridges/bd-bridge.js';
 import { ConvoyError, GasTownErrorCode, wrapError } from '../errors.js';
 
 // ============================================================================
