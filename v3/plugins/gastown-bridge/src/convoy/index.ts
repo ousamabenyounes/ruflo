@@ -23,6 +23,9 @@ export {
 export {
   ConvoyObserver,
   createConvoyObserver,
+  // Lazy loading support (defers observer initialization until first watch)
+  createLazyConvoyObserver,
+  getLazyObserverStats,
   // Types
   type WasmGraphModule,
   type CompletionCallback,
