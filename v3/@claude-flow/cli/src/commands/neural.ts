@@ -1328,9 +1328,59 @@ const benchmarkCommand: Command = {
     try {
       const attention = await import('@ruvector/attention');
 
-      // Run benchmark
+      // Manual benchmark since benchmarkAttention has a binding bug
+      const benchmarkMechanism = async (name: string, mechanism: { computeRaw: (q: Float32Array, k: Float32Array[], v: Float32Array[]) => Float32Array }) => {
+        const query = new Float32Array(dim);
+        const keys: Float32Array[] = [];
+        const values: Float32Array[] = [];
+
+        for (let i = 0; i < dim; i++) query[i] = Math.random();
+        for (let k = 0; k < numKeys; k++) {
+          const key = new Float32Array(dim);
+          const val = new Float32Array(dim);
+          for (let i = 0; i < dim; i++) {
+            key[i] = Math.random();
+            val[i] = Math.random();
+          }
+          keys.push(key);
+          values.push(val);
+        }
+
+        // Warmup
+        for (let i = 0; i < 10; i++) mechanism.computeRaw(query, keys, values);
+
+        const start = performance.now();
+        for (let i = 0; i < iterations; i++) {
+          mechanism.computeRaw(query, keys, values);
+        }
+        const elapsed = performance.now() - start;
+
+        return {
+          name,
+          averageTimeMs: elapsed / iterations,
+          opsPerSecond: Math.round((iterations / elapsed) * 1000),
+        };
+      };
+
       spinner.setText(`Benchmarking attention mechanisms (dim=${dim}, keys=${numKeys}, iter=${iterations})...`);
-      const results = attention.benchmarkAttention(dim, numKeys, iterations);
+
+      const results: { name: string; averageTimeMs: number; opsPerSecond: number }[] = [];
+
+      // Benchmark each mechanism
+      const dotProduct = new attention.DotProductAttention(dim);
+      results.push(await benchmarkMechanism('DotProduct', dotProduct));
+
+      const flash = new attention.FlashAttention(dim, 64);
+      results.push(await benchmarkMechanism('FlashAttention', flash));
+
+      const multiHead = new attention.MultiHeadAttention(dim, 4);
+      results.push(await benchmarkMechanism('MultiHead (4 heads)', multiHead));
+
+      const hyperbolic = new attention.HyperbolicAttention(dim, 1.0);
+      results.push(await benchmarkMechanism('Hyperbolic', hyperbolic));
+
+      const linear = new attention.LinearAttention(dim, dim);
+      results.push(await benchmarkMechanism('Linear', linear));
 
       spinner.succeed('Benchmark complete');
 
@@ -1343,24 +1393,24 @@ const benchmarkCommand: Command = {
         ],
         data: results.map(r => ({
           name: r.name,
-          avgTime: r.averageTimeMs.toFixed(3),
+          avgTime: r.averageTimeMs.toFixed(4),
           opsPerSec: r.opsPerSecond.toLocaleString(),
         })),
       });
 
       // Show speedup comparisons
-      const dotProduct = results.find(r => r.name.includes('DotProduct'));
-      const flash = results.find(r => r.name.includes('Flash'));
-      const hyperbolic = results.find(r => r.name.includes('Hyperbolic'));
+      const dotProductResult = results.find(r => r.name.includes('DotProduct'));
+      const flashResult = results.find(r => r.name.includes('Flash'));
+      const hyperbolicResult = results.find(r => r.name.includes('Hyperbolic'));
 
-      if (dotProduct && flash) {
-        const speedup = dotProduct.averageTimeMs / flash.averageTimeMs;
+      if (dotProductResult && flashResult) {
+        const speedup = dotProductResult.averageTimeMs / flashResult.averageTimeMs;
         output.writeln();
         output.writeln(output.highlight(`Flash Attention speedup: ${speedup.toFixed(2)}x faster than DotProduct`));
       }
 
-      if (dotProduct && hyperbolic) {
-        output.writeln(output.dim(`Hyperbolic overhead: ${(hyperbolic.averageTimeMs / dotProduct.averageTimeMs).toFixed(2)}x (expected for manifold ops)`));
+      if (dotProductResult && hyperbolicResult) {
+        output.writeln(output.dim(`Hyperbolic overhead: ${(hyperbolicResult.averageTimeMs / dotProductResult.averageTimeMs).toFixed(2)}x (expected for manifold ops)`));
       }
 
       // Also benchmark MicroLoRA
