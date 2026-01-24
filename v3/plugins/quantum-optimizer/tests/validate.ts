@@ -4,6 +4,17 @@
  */
 
 import { quantumOptimizerTools, getTool, getToolNames } from '../dist/mcp-tools.js';
+import type { MCPToolResult } from '../dist/types.js';
+
+// Helper to parse MCP result
+function parseResult(result: MCPToolResult): { success: boolean; data: any; error?: string } {
+  if (result.isError) {
+    const parsed = JSON.parse(result.content[0]?.text || '{}');
+    return { success: false, data: null, error: parsed.message || 'Unknown error' };
+  }
+  const data = JSON.parse(result.content[0]?.text || '{}');
+  return { success: true, data };
+}
 
 async function validate() {
   console.log('=== Quantum Optimizer Plugin Validation ===\n');
@@ -21,7 +32,7 @@ async function validate() {
     const tool = getTool('quantum_annealing_solve');
     if (!tool) throw new Error('Tool not found');
 
-    const result = await tool.handler({
+    const rawResult = await tool.handler({
       problem: {
         type: 'qubo',
         variables: 5,
@@ -35,8 +46,8 @@ async function validate() {
       embedding: 'auto'
     });
 
-    if (!result.success) throw new Error(result.error?.message || 'Unknown error');
-    const data = result.data as any;
+    const { success, data, error } = parseResult(rawResult);
+    if (!success) throw new Error(error);
     if (!data.solution) throw new Error('Invalid response format');
     if (typeof data.solution.energy !== 'number') throw new Error('Missing energy');
 
@@ -55,7 +66,7 @@ async function validate() {
     const tool = getTool('quantum_qaoa_optimize');
     if (!tool) throw new Error('Tool not found');
 
-    const result = await tool.handler({
+    const rawResult = await tool.handler({
       problem: {
         type: 'max_cut',
         graph: {
@@ -72,8 +83,8 @@ async function validate() {
       shots: 512
     });
 
-    if (!result.success) throw new Error(result.error?.message || 'Unknown error');
-    const data = result.data as any;
+    const { success, data, error } = parseResult(rawResult);
+    if (!success) throw new Error(error);
     if (!data.solution) throw new Error('Invalid response format');
     if (typeof data.approximationRatio !== 'number') throw new Error('Missing approximationRatio');
 
@@ -92,7 +103,7 @@ async function validate() {
     const tool = getTool('quantum_grover_search');
     if (!tool) throw new Error('Tool not found');
 
-    const result = await tool.handler({
+    const rawResult = await tool.handler({
       searchSpace: {
         size: 1000,
         oracle: 'element == 42',
@@ -105,8 +116,8 @@ async function validate() {
       }
     });
 
-    if (!result.success) throw new Error(result.error?.message || 'Unknown error');
-    const data = result.data as any;
+    const { success, data, error } = parseResult(rawResult);
+    if (!success) throw new Error(error);
     if (!Array.isArray(data.solutions)) throw new Error('Invalid response format');
     if (typeof data.queries !== 'number') throw new Error('Missing queries');
 
@@ -125,7 +136,7 @@ async function validate() {
     const tool = getTool('quantum_dependency_resolve');
     if (!tool) throw new Error('Tool not found');
 
-    const result = await tool.handler({
+    const rawResult = await tool.handler({
       packages: [
         { name: 'react', version: '^18.0.0', dependencies: { 'react-dom': '^18.0.0' }, size: 100000 },
         { name: 'react-dom', version: '^18.0.0', dependencies: { scheduler: '^0.23.0' }, size: 120000 },
@@ -140,8 +151,8 @@ async function validate() {
       solver: 'quantum_annealing'
     });
 
-    if (!result.success) throw new Error(result.error?.message || 'Unknown error');
-    const data = result.data as any;
+    const { success, data, error } = parseResult(rawResult);
+    if (!success) throw new Error(error);
     if (!data.resolved) throw new Error('Invalid response format');
     if (!Array.isArray(data.installOrder)) throw new Error('Missing installOrder');
 
@@ -160,7 +171,7 @@ async function validate() {
     const tool = getTool('quantum_schedule_optimize');
     if (!tool) throw new Error('Tool not found');
 
-    const result = await tool.handler({
+    const rawResult = await tool.handler({
       tasks: [
         { id: 'task1', duration: 10, dependencies: [], resources: ['cpu'], priority: 1 },
         { id: 'task2', duration: 5, dependencies: ['task1'], resources: ['cpu'], priority: 2 },
@@ -174,8 +185,8 @@ async function validate() {
       objective: 'makespan'
     });
 
-    if (!result.success) throw new Error(result.error?.message || 'Unknown error');
-    const data = result.data as any;
+    const { success, data, error } = parseResult(rawResult);
+    if (!success) throw new Error(error);
     if (!data.schedule) throw new Error('Invalid response format');
     if (typeof data.makespan !== 'number') throw new Error('Missing makespan');
 
