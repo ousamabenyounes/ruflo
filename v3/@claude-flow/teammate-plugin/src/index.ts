@@ -76,8 +76,24 @@ export {
   type SemanticRouterConfig,
 } from './semantic-router.js';
 
+// Utility class exports (extracted modules)
+export {
+  RateLimiter,
+  MetricsCollector,
+  HealthChecker,
+  CircuitBreaker,
+  CircuitBreakerOpenError,
+  withRetry,
+  createRetryState,
+  calculateBackoffDelay,
+  sleep,
+  withTimeout,
+} from './utils/index.js';
+
 // Type exports
 export {
+  // MCP param limits
+  MCP_PARAM_LIMITS,
   // Version & Security
   MINIMUM_CLAUDE_CODE_VERSION,
   SECURITY_LIMITS,
