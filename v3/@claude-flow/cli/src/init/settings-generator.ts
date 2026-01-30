@@ -144,11 +144,10 @@ export function generateSettings(options: InitOptions): object {
 function generateStatusLineConfig(options: InitOptions): object {
   const config = options.statusline;
 
-  // Build the command that generates the statusline
+  // Build the command that generates the statusline (cross-platform)
   // Uses npx @claude-flow/cli@latest (or @alpha) to run the hooks statusline command
   // Falls back to local helper script or simple "V3" if CLI not available
-  // Default: full multi-line statusline with progress bars, metrics, and architecture status
-  const statuslineCommand = 'npx @claude-flow/cli@latest hooks statusline 2>/dev/null || node .claude/helpers/statusline.cjs 2>/dev/null || echo "▊ Claude Flow V3"';
+  const statuslineCommand = `npx @claude-flow/cli@latest hooks statusline 2>${NULL_DEV} || node .claude/helpers/statusline.cjs 2>${NULL_DEV} || echo "▊ Claude Flow V3"`;
 
   return {
     // Type must be "command" for Claude Code validation
