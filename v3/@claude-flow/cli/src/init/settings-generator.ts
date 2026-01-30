@@ -338,12 +338,16 @@ function generateHooksConfig(config: HooksConfig): object {
 
   // Notification hooks - store notifications in memory for swarm awareness
   if (config.notification) {
+    const notifyCmd = IS_WINDOWS
+      ? `npx @claude-flow/cli@latest memory store --namespace notifications --key "notify-%RANDOM%" --value "%NOTIFICATION_MESSAGE%" 2>${NULL_DEV}`
+      : '[ -n "$NOTIFICATION_MESSAGE" ] && npx @claude-flow/cli@latest memory store --namespace notifications --key "notify-$(date +%s)" --value "$NOTIFICATION_MESSAGE" 2>/dev/null || true';
+
     hooks.Notification = [
       {
         hooks: [
           {
             type: 'command',
-            command: '[ -n "$NOTIFICATION_MESSAGE" ] && npx @claude-flow/cli@latest memory store --namespace notifications --key "notify-$(date +%s)" --value "$NOTIFICATION_MESSAGE" 2>/dev/null || true',
+            command: notifyCmd,
             timeout: 3000,
             continueOnError: true,
           },
