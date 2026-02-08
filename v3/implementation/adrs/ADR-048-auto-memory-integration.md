@@ -1,6 +1,6 @@
 # ADR-048: Claude Code Auto Memory Integration
 
-**Status:** Proposed
+**Status:** Implemented
 **Date:** 2026-02-08
 **Authors:** RuvNet, Claude Flow Team
 **Supersedes:** None
