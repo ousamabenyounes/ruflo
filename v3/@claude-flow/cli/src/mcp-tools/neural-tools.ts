@@ -4,10 +4,10 @@
  * V2 Compatibility - Neural network and ML tools
  *
  * ✅ HYBRID Implementation:
- * - Uses @claude-flow/embeddings for REAL embeddings when available
- * - Falls back to simulated embeddings when @claude-flow/embeddings not installed
- * - Pattern storage and search with cosine similarity
- * - Training progress tracked (actual model training requires external tools)
+ * - Uses @claude-flow/embeddings for REAL ML embeddings when available
+ * - Falls back to deterministic hash-based embeddings when ML model not installed
+ * - Pattern storage and search with cosine similarity (real math in all tiers)
+ * - Training stores patterns as searchable embeddings (not simulated)
  *
  * Note: For production neural features, use @claude-flow/neural module
  */
@@ -121,7 +121,7 @@ function saveNeuralStore(store: NeuralStore): void {
   writeFileSync(getNeuralPath(), JSON.stringify(store, null, 2), 'utf-8');
 }
 
-// Generate embedding - uses real embeddings if available, falls back to hash-based
+// Generate embedding - uses real ML embeddings if available, falls back to deterministic hash
 async function generateEmbedding(text?: string, dims: number = 384): Promise<number[]> {
   // If real embeddings available and text provided, use them
   if (realEmbeddings && text) {
@@ -149,8 +149,8 @@ async function generateEmbedding(text?: string, dims: number = 384): Promise<num
     return embedding;
   }
 
-  // Pure random fallback
-  return Array.from({ length: dims }, () => Math.random() * 2 - 1);
+  // No text provided — return zero vector (callers should always provide text)
+  return new Array(dims).fill(0);
 }
 
 // Cosine similarity for pattern search

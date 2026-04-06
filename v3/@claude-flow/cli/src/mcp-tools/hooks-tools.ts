@@ -1326,8 +1326,8 @@ export const hooksExplain: MCPTool = {
       if (taskLower.includes(pattern)) {
         matchedPatterns.push({
           pattern,
-          matchScore: 0.85 + Math.random() * 0.1,
-          examples: [`Previous ${pattern} task completed successfully`, `${pattern} patterns from repository analysis`],
+          matchScore: pattern.length / Math.max(taskLower.length, 1), // real ratio: pattern length vs task length
+          examples: [`Keyword "${pattern}" matched in task description`],
         });
       }
     }
