@@ -35,6 +35,26 @@ const session = safeRequire(path.join(helpersDir, 'session.cjs'));
 const memory = safeRequire(path.join(helpersDir, 'memory.cjs'));
 const intelligence = safeRequire(path.join(helpersDir, 'intelligence.cjs'));
 
+// ── Intelligence timeout protection (fixes #1530, #1531) ───────────────────
+var INTELLIGENCE_TIMEOUT_MS = 3000;
+function runWithTimeout(fn, label) {
+  return new Promise(function(resolve) {
+    var timer = setTimeout(function() {
+      process.stderr.write("[WARN] " + label + " timed out after " + INTELLIGENCE_TIMEOUT_MS + "ms, skipping\n");
+      resolve(null);
+    }, INTELLIGENCE_TIMEOUT_MS);
+    try {
+      var result = fn();
+      clearTimeout(timer);
+      resolve(result);
+    } catch (e) {
+      clearTimeout(timer);
+      resolve(null);
+    }
+  });
+}
+
+
 const [,, command, ...args] = process.argv;
 
 // Read stdin — Claude Code sends hook data as JSON via stdin
@@ -58,6 +78,13 @@ async function readStdin() {
 }
 
 async function main() {
+  // Global safety timeout: hooks must NEVER hang (#1530, #1531)
+  var safetyTimer = setTimeout(function() {
+    process.stderr.write("[WARN] Hook handler global timeout (5s), forcing exit\n");
+    process.exit(0);
+  }, 5000);
+  safetyTimer.unref();
+
   let stdinData = '';
   try { stdinData = await readStdin(); } catch (e) { /* ignore stdin errors */ }
 
@@ -122,7 +149,7 @@ const handlers = {
     console.log('[OK] Edit recorded');
   },
 
-  'session-restore': () => {
+  'session-restore': async () => {
     if (session) {
       var existing = session.restore && session.restore();
       if (!existing) {
@@ -131,27 +158,25 @@ const handlers = {
     } else {
       console.log('[OK] Session restored: session-' + Date.now());
     }
+    // Initialize intelligence (with timeout — #1530)
     if (intelligence && intelligence.init) {
-      try {
-        var result = intelligence.init();
-        if (result && result.nodes > 0) {
-          console.log('[INTELLIGENCE] Loaded ' + result.nodes + ' patterns, ' + result.edges + ' edges');
-        }
-      } catch (e) { /* non-fatal */ }
+      var initResult = await runWithTimeout(function() { return intelligence.init(); }, 'intelligence.init()');
+      if (initResult && initResult.nodes > 0) {
+        console.log('[INTELLIGENCE] Loaded ' + initResult.nodes + ' patterns, ' + initResult.edges + ' edges');
+      }
     }
   },
 
-  'session-end': () => {
+  'session-end': async () => {
+    // Consolidate intelligence (with timeout — #1530)
     if (intelligence && intelligence.consolidate) {
-      try {
-        var result = intelligence.consolidate();
-        if (result && result.entries > 0) {
-          var msg = '[INTELLIGENCE] Consolidated: ' + result.entries + ' entries, ' + result.edges + ' edges';
-          if (result.newEntries > 0) msg += ', ' + result.newEntries + ' new';
-          msg += ', PageRank recomputed';
-          console.log(msg);
-        }
-      } catch (e) { /* non-fatal */ }
+      var consResult = await runWithTimeout(function() { return intelligence.consolidate(); }, 'intelligence.consolidate()');
+      if (consResult && consResult.entries > 0) {
+        var msg = '[INTELLIGENCE] Consolidated: ' + consResult.entries + ' entries, ' + consResult.edges + ' edges';
+        if (consResult.newEntries > 0) msg += ', ' + consResult.newEntries + ' new';
+        msg += ', PageRank recomputed';
+        console.log(msg);
+      }
     }
     if (session && session.end) {
       session.end();
@@ -215,7 +240,7 @@ const handlers = {
 
 if (command && handlers[command]) {
     try {
-      handlers[command]();
+      await Promise.resolve(handlers[command]());
     } catch (e) {
       console.log('[WARN] Hook ' + command + ' encountered an error: ' + e.message);
     }

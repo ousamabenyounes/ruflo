@@ -12,7 +12,7 @@
  * Note: Some optimization suggestions are illustrative
  */
 
-import type { MCPTool } from './types.js';
+import { type MCPTool, getProjectCwd } from './types.js';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import * as os from 'node:os';
@@ -52,7 +52,7 @@ interface PerfStore {
 }
 
 function getPerfDir(): string {
-  return join(process.cwd(), STORAGE_DIR, PERF_DIR);
+  return join(getProjectCwd(), STORAGE_DIR, PERF_DIR);
 }
 
 function getPerfPath(): string {

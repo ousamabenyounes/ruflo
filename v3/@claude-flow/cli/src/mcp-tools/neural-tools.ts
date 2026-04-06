@@ -12,7 +12,7 @@
  * Note: For production neural features, use @claude-flow/neural module
  */
 
-import type { MCPTool } from './types.js';
+import { type MCPTool, getProjectCwd } from './types.js';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -90,7 +90,7 @@ interface NeuralStore {
 }
 
 function getNeuralDir(): string {
-  return join(process.cwd(), STORAGE_DIR, NEURAL_DIR);
+  return join(getProjectCwd(), STORAGE_DIR, NEURAL_DIR);
 }
 
 function getNeuralPath(): string {

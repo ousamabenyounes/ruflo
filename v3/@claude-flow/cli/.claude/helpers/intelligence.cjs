@@ -25,6 +25,10 @@ const PENDING_PATH = path.join(DATA_DIR, 'pending-insights.jsonl');
 const SESSION_DIR = path.join(process.cwd(), '.claude-flow', 'sessions');
 const SESSION_FILE = path.join(SESSION_DIR, 'current.json');
 
+// ── Safety limits (fixes #1530, #1531) ─────────────────────────────────────
+const MAX_DATA_FILE_SIZE = 10 * 1024 * 1024; // 10 MB — skip files larger than this
+const MAX_GRAPH_NODES = 5000;                 // skip PageRank if graph exceeds this
+
 // ── Stop words for trigram matching ──────────────────────────────────────────
 
 const STOP_WORDS = new Set([
@@ -46,6 +50,14 @@ function ensureDataDir() {
 }
 
 function readJSON(filePath) {
+  // Safety: skip files exceeding MAX_DATA_FILE_SIZE (#1531)
+  try {
+    const stat = fs.statSync(filePath);
+    if (stat.size > MAX_DATA_FILE_SIZE) {
+      process.stderr.write("[INTELLIGENCE] WARN: Skipping " + path.basename(filePath) + " (" + Math.round(stat.size / 1048576) + "MB exceeds 10MB limit)\n");
+      return null;
+    }
+  } catch { /* file may not exist yet */ }
   try {
     if (fs.existsSync(filePath)) return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
   } catch { /* corrupt file — start fresh */ }
@@ -342,8 +354,15 @@ function init() {
   // Build edges
   const edges = buildEdges(store);
 
-  // Compute PageRank
-  const pageRanks = computePageRank(nodes, edges, 0.85, 30);
+  // Compute PageRank (skip if graph too large — #1531)
+  const nodeCount = Object.keys(nodes).length;
+  let pageRanks = {};
+  if (nodeCount > MAX_GRAPH_NODES) {
+    process.stderr.write("[INTELLIGENCE] WARN: Graph has " + nodeCount + " nodes (>" + MAX_GRAPH_NODES + "), skipping PageRank\n");
+    for (const id of Object.keys(nodes)) pageRanks[id] = 1 / nodeCount;
+  } else {
+    pageRanks = computePageRank(nodes, edges, 0.85, 30);
+  }
 
   // Write graph state
   const graph = {
@@ -595,8 +614,15 @@ function consolidate() {
     };
   }
 
-  // 5. Recompute PageRank
-  const pageRanks = computePageRank(nodes, edges, 0.85, 30);
+  // 5. Recompute PageRank (skip if graph too large — #1531)
+  const nodeCount = Object.keys(nodes).length;
+  let pageRanks = {};
+  if (nodeCount > MAX_GRAPH_NODES) {
+    process.stderr.write("[INTELLIGENCE] WARN: Graph has " + nodeCount + " nodes (>" + MAX_GRAPH_NODES + "), skipping PageRank in consolidate\n");
+    for (const id of Object.keys(nodes)) pageRanks[id] = 1 / nodeCount;
+  } else {
+    pageRanks = computePageRank(nodes, edges, 0.85, 30);
+  }
 
   // 6. Write updated graph
   writeJSON(GRAPH_PATH, {

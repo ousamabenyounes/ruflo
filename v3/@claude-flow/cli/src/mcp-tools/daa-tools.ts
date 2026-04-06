@@ -9,7 +9,7 @@
  * - Useful for workflow orchestration and state tracking
  */
 
-import type { MCPTool } from './types.js';
+import { type MCPTool, getProjectCwd } from './types.js';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -53,7 +53,7 @@ interface DAAStore {
 }
 
 function getDAADir(): string {
-  return join(process.cwd(), STORAGE_DIR, DAA_DIR);
+  return join(getProjectCwd(), STORAGE_DIR, DAA_DIR);
 }
 
 function getDAAPath(): string {

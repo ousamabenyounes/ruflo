@@ -9,7 +9,7 @@
  * - os module for system information
  */
 
-import type { MCPTool } from './types.js';
+import { type MCPTool, getProjectCwd } from './types.js';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,7 +47,7 @@ interface SystemMetrics {
 }
 
 function getSystemDir(): string {
-  return join(process.cwd(), STORAGE_DIR, SYSTEM_DIR);
+  return join(getProjectCwd(), STORAGE_DIR, SYSTEM_DIR);
 }
 
 function getMetricsPath(): string {
@@ -308,7 +308,7 @@ export const systemTools: MCPTool[] = [
         platform: process.platform,
         arch: process.arch,
         pid: process.pid,
-        cwd: process.cwd(),
+        cwd: getProjectCwd(),
         env: process.env.NODE_ENV || 'development',
         features: {
           swarm: true,
@@ -437,7 +437,7 @@ export const systemTools: MCPTool[] = [
     },
     handler: async () => {
       // Read from the task store file
-      const storePath = join(process.cwd(), '.claude-flow', 'tasks', 'store.json');
+      const storePath = join(getProjectCwd(), '.claude-flow', 'tasks', 'store.json');
       let tasks: Array<{ status: string }> = [];
       try {
         if (existsSync(storePath)) {
