@@ -174,7 +174,7 @@ npx @claude-flow/cli@latest doctor --fix
 }
 
 function agentTypes(): string {
-  return `## Available Agents (60+ Types)
+  return `## Available Agents (16 Roles + Custom)
 
 ### Core Development
 \`coder\`, \`reviewer\`, \`tester\`, \`planner\`, \`researcher\`
@@ -182,14 +182,13 @@ function agentTypes(): string {
 ### Specialized
 \`security-architect\`, \`security-auditor\`, \`memory-specialist\`, \`performance-engineer\`
 
-### Swarm Coordination
+### Coordination
 \`hierarchical-coordinator\`, \`mesh-coordinator\`, \`adaptive-coordinator\`
 
 ### GitHub & Repository
 \`pr-manager\`, \`code-review-swarm\`, \`issue-tracker\`, \`release-manager\`
 
-### SPARC Methodology
-\`sparc-coord\`, \`sparc-coder\`, \`specification\`, \`pseudocode\`, \`architecture\``;
+Any string can be used as a custom agent type — these are the typed roles with specialized behavior.`;
 }
 
 function hooksSystem(): string {
@@ -244,21 +243,37 @@ npx @claude-flow/cli@latest hooks post-task --task-id "[id]" --success true --st
 }
 
 function memoryCommands(): string {
-  return `## Memory Commands Reference
+  return `## Memory & Vector Search
+
+### MCP Tools (use via ToolSearch to discover)
+
+| Tool | Description |
+|------|-------------|
+| \`memory_store\` | Store value with ONNX 384-dim vector embedding |
+| \`memory_search\` | Semantic vector search by query |
+| \`memory_retrieve\` | Get entry by key |
+| \`memory_list\` | List entries in namespace |
+| \`memory_delete\` | Delete entry |
+| \`memory_import_claude\` | Import Claude Code memories into AgentDB (allProjects=true for all) |
+| \`memory_search_unified\` | Search across ALL namespaces (Claude + AgentDB + patterns) |
+| \`memory_bridge_status\` | Show bridge health, vectors, SONA, intelligence |
+
+### CLI Commands
 
 \`\`\`bash
-# Store (REQUIRED: --key, --value; OPTIONAL: --namespace, --ttl, --tags)
+# Store with vector embedding
 npx @claude-flow/cli@latest memory store --key "pattern-auth" --value "JWT with refresh" --namespace patterns
 
-# Search (REQUIRED: --query; OPTIONAL: --namespace, --limit, --threshold)
+# Semantic search
 npx @claude-flow/cli@latest memory search --query "authentication patterns"
 
-# List (OPTIONAL: --namespace, --limit)
-npx @claude-flow/cli@latest memory list --namespace patterns --limit 10
+# Import all Claude Code memories into AgentDB
+node .claude/helpers/auto-memory-hook.mjs import-all
+\`\`\`
 
-# Retrieve (REQUIRED: --key; OPTIONAL: --namespace)
-npx @claude-flow/cli@latest memory retrieve --key "pattern-auth" --namespace patterns
-\`\`\``;
+### Claude Code ↔ AgentDB Bridge
+
+Claude Code auto-memory files (\`~/.claude/projects/*/memory/*.md\`) are automatically imported into AgentDB with ONNX vector embeddings on session start. Use \`memory_search_unified\` to search across both stores.`;
 }
 
 function securityRulesLight(): string {
@@ -318,8 +333,8 @@ function performanceSection(): string {
 - Always run benchmarks before and after performance changes
 - Always profile before optimizing — never guess at bottlenecks
 - Prefer algorithmic improvements over micro-optimizations
-- Keep HNSW search within 150x-12,500x faster target
-- Keep memory reduction within 50-75% target with quantization
+- Use DiskANN or HNSW for vector search (auto-selected by dataset size)
+- Use Int8 quantization for ~4x memory reduction when needed
 
 ### Performance Tooling
 \`\`\`bash
@@ -335,18 +350,18 @@ npx @claude-flow/cli@latest performance metrics --format table
 }
 
 function intelligenceSystem(): string {
-  return `## Intelligence System (RuVector)
+  return `## Intelligence System
 
-- **SONA**: Self-Optimizing Neural Architecture (<0.05ms adaptation)
-- **HNSW**: 150x-12,500x faster pattern search
-- **EWC++**: Elastic Weight Consolidation (prevents forgetting)
-- **Flash Attention**: 2.49x-7.47x speedup
+- **SONA**: Self-Optimizing Pattern Learning (sub-millisecond pattern matching)
+- **HNSW/DiskANN**: HNSW-indexed vector search with DiskANN SSD-friendly fallback
+- **ONNX Embeddings**: all-MiniLM-L6-v2, 384 dimensions, real neural vectors
+- **ReasoningBank**: Pattern storage with file persistence
 
-The 4-step intelligence pipeline:
-1. **RETRIEVE** - Fetch relevant patterns via HNSW
-2. **JUDGE** - Evaluate with verdicts (success/failure)
-3. **DISTILL** - Extract key learnings via LoRA
-4. **CONSOLIDATE** - Prevent catastrophic forgetting via EWC++`;
+The learning pipeline:
+1. **RETRIEVE** — Fetch relevant patterns via HNSW/DiskANN vector search
+2. **JUDGE** — Evaluate with verdicts (success/failure) from post-task hooks
+3. **DISTILL** — Extract key learnings, store as patterns with embeddings
+4. **CONSOLIDATE** — Persist patterns to disk across sessions`;
 }
 
 function envVars(): string {
@@ -361,6 +376,50 @@ CLAUDE_FLOW_MEMORY_PATH=./data/memory
 \`\`\``;
 }
 
+function mcpToolDiscovery(): string {
+  return `## Key MCP Tools (314 available — use ToolSearch to discover)
+
+### Most Used Tools
+
+| Category | Tools | What They Do |
+|----------|-------|-------------|
+| **Memory** | \`memory_store\`, \`memory_search\`, \`memory_search_unified\` | Store/search with ONNX vector embeddings |
+| **Claude Bridge** | \`memory_import_claude\`, \`memory_bridge_status\` | Import Claude memories into AgentDB |
+| **Swarm** | \`swarm_init\`, \`swarm_status\`, \`swarm_health\` | Multi-agent coordination |
+| **Agents** | \`agent_spawn\`, \`agent_list\`, \`agent_status\` | Agent lifecycle |
+| **Hive-Mind** | \`hive-mind_init\`, \`hive-mind_spawn\`, \`hive-mind_consensus\` | Byzantine/Raft consensus |
+| **Hooks** | \`hooks_route\`, \`hooks_session-start\`, \`hooks_post-task\` | Task routing + learning |
+| **Workers** | \`hooks_worker-list\`, \`hooks_worker-dispatch\` | 12 background workers |
+| **Security** | \`aidefence_scan\`, \`aidefence_is_safe\` | Prompt injection detection |
+| **Intelligence** | \`hooks_intelligence\`, \`neural_status\` | Pattern learning + SONA |
+
+### Swarm Capabilities
+
+- **Topologies**: hierarchical (anti-drift), mesh, ring, star, adaptive
+- **Consensus**: Raft (leader-based), Byzantine (PBFT), Gossip (eventual)
+- **Hive-Mind**: Queen-led coordination with spawn, broadcast, consensus voting, shared memory
+- **12 Background Workers**: audit, optimize, testgaps, map, deepdive, document, refactor, benchmark, ultralearn, consolidate, predict, preload
+
+### Memory Capabilities
+
+- **ONNX Embeddings**: all-MiniLM-L6-v2, 384 dimensions — real neural vectors
+- **DiskANN**: SSD-friendly vector search (8,000x faster insert than HNSW, perfect recall at 1K)
+- **sql.js**: Cross-platform SQLite (WASM, no native compilation)
+- **Claude Code Bridge**: Auto-imports MEMORY.md files into AgentDB on session start
+- **Unified Search**: \`memory_search_unified\` searches Claude memories + AgentDB + patterns
+- **SONA Learning**: Trajectory recording → pattern extraction → file persistence
+
+### How to Discover Tools
+
+Use ToolSearch to find specific tools:
+\`\`\`
+ToolSearch("memory search")     → memory_store, memory_search, memory_search_unified
+ToolSearch("swarm")             → swarm_init, swarm_status, swarm_health, swarm_shutdown
+ToolSearch("hive consensus")    → hive-mind_consensus, hive-mind_status
+ToolSearch("+aidefence")        → aidefence_scan, aidefence_is_safe, aidefence_has_pii
+\`\`\``;
+}
+
 function setupAndBoundary(): string {
   return `## Quick Setup
 
@@ -370,16 +429,17 @@ npx @claude-flow/cli@latest daemon start
 npx @claude-flow/cli@latest doctor --fix
 \`\`\`
 
-## Claude Code vs CLI Tools
+## Claude Code vs MCP Tools
 
-- Claude Code's Task tool handles ALL execution: agents, file ops, code generation, git
-- CLI tools handle coordination via Bash: swarm init, memory, hooks, routing
-- NEVER use CLI tools as a substitute for Task tool agents
+- **Claude Code Task tool** handles execution: agents, file ops, code generation, git
+- **MCP tools** (via ToolSearch) handle coordination: swarm, memory, hooks, routing, hive-mind
+- **CLI commands** (via Bash) are the same tools with terminal output
+- Use \`ToolSearch("keyword")\` to discover available MCP tools
 
 ## Support
 
-- Documentation: https://github.com/ruvnet/claude-flow
-- Issues: https://github.com/ruvnet/claude-flow/issues`;
+- Documentation: https://github.com/ruvnet/ruflo
+- Issues: https://github.com/ruvnet/ruflo/issues`;
 }
 
 // --- Template Composers ---
@@ -413,6 +473,7 @@ const TEMPLATE_SECTIONS: Record<ClaudeMdTemplate, Array<(opts: InitOptions) => s
     (_opts) => cliCommandsTable(),
     (_opts) => agentTypes(),
     (_opts) => memoryCommands(),
+    (_opts) => mcpToolDiscovery(),
     (_opts) => setupAndBoundary(),
   ],
   full: [
@@ -431,6 +492,7 @@ const TEMPLATE_SECTIONS: Record<ClaudeMdTemplate, Array<(opts: InitOptions) => s
     (_opts) => hooksSystem(),
     (_opts) => learningProtocol(),
     (_opts) => memoryCommands(),
+    (_opts) => mcpToolDiscovery(),
     (_opts) => intelligenceSystem(),
     (_opts) => envVars(),
     (_opts) => setupAndBoundary(),
