@@ -11,10 +11,11 @@
 
 import { type MCPTool, getProjectCwd } from './types.js';
 import { validateIdentifier } from './validate-input.js';
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, statfsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as os from 'node:os';
+import * as dns from 'node:dns';
 
 // Read version dynamically from package.json
 function getPackageVersion(): string {
@@ -359,27 +360,59 @@ export const systemTools: MCPTool[] = [
       });
 
       if (input.deep) {
-        // Disk check — real free space check via os module
+        // Disk check — real free space via statfsSync (Node 18.15+)
         {
           const t0 = performance.now();
-          const freeMem = os.freemem();
-          const totalMem = os.totalmem();
-          const elapsed = performance.now() - t0;
-          // Use memory as a proxy; real disk check would need statvfs
-          checks.push({
-            name: 'disk',
-            status: 'unknown',
-            latency: Math.round(elapsed * 100) / 100,
-            message: 'Disk space check not implemented — use os-level tools',
-          });
+          try {
+            const stats = statfsSync(projectCwd);
+            const totalBytes = stats.blocks * stats.bsize;
+            const freeBytes = stats.bfree * stats.bsize;
+            const totalGB = Math.round((totalBytes / (1024 ** 3)) * 10) / 10;
+            const freeGB = Math.round((freeBytes / (1024 ** 3)) * 10) / 10;
+            const freePercent = Math.round((freeBytes / totalBytes) * 100);
+            const elapsed = performance.now() - t0;
+            checks.push({
+              name: 'disk',
+              status: freePercent > 10 ? 'healthy' : 'warning',
+              latency: Math.round(elapsed * 100) / 100,
+              message: `${freeGB}GB free of ${totalGB}GB (${freePercent}%)`,
+            });
+          } catch {
+            const elapsed = performance.now() - t0;
+            checks.push({
+              name: 'disk',
+              status: 'unknown',
+              latency: Math.round(elapsed * 100) / 100,
+              message: 'Disk space check failed — statfsSync unavailable',
+            });
+          }
         }
 
-        // Network — cannot verify without making a request
-        checks.push({
-          name: 'network',
-          status: 'unknown',
-          message: 'Network connectivity not monitored',
-        });
+        // Network — DNS resolution check with timeout
+        {
+          const t0 = performance.now();
+          try {
+            await Promise.race([
+              dns.promises.lookup('registry.npmjs.org'),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000)),
+            ]);
+            const elapsed = performance.now() - t0;
+            checks.push({
+              name: 'network',
+              status: 'healthy',
+              latency: Math.round(elapsed * 100) / 100,
+              message: 'DNS resolution working',
+            });
+          } catch {
+            const elapsed = performance.now() - t0;
+            checks.push({
+              name: 'network',
+              status: 'warning',
+              latency: Math.round(elapsed * 100) / 100,
+              message: 'DNS resolution failed — check network',
+            });
+          }
+        }
 
         // Database — check if coordination store exists
         {

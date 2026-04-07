@@ -2942,20 +2942,62 @@ export const hooksIntelligenceAttention: MCPTool = {
     { const v = validateText(query, 'query'); if (!v.valid) return { success: false, error: v.error }; }
 
     let implementation = 'placeholder';
+    let embeddingSource: 'onnx' | 'hash-fallback' | 'none' = 'none';
     const results: Array<{ index: number; weight: number; pattern: string; expert?: string }> = [];
+
+    // Helper: generate query embedding, preferring real ONNX embeddings over hash fallback
+    async function getQueryEmbedding(text: string, dims: number): Promise<{ embedding: Float32Array; source: 'onnx' | 'hash-fallback' }> {
+      // Try ONNX via @claude-flow/embeddings
+      try {
+        const embeddingsModule = await import('@claude-flow/embeddings').catch(() => null);
+        if (embeddingsModule?.createEmbeddingService) {
+          const service = embeddingsModule.createEmbeddingService({ provider: 'onnx' });
+          const result = await service.embed(text);
+          const arr = new Float32Array(dims);
+          for (let i = 0; i < Math.min(dims, result.embedding.length); i++) {
+            arr[i] = result.embedding[i];
+          }
+          return { embedding: arr, source: 'onnx' };
+        }
+      } catch {
+        // ONNX not available, try agentic-flow
+      }
+
+      // Try agentic-flow embeddings
+      try {
+        const embeddingsModule = await import('@claude-flow/embeddings').catch(() => null);
+        if (embeddingsModule?.createEmbeddingService) {
+          const service = embeddingsModule.createEmbeddingService({ provider: 'agentic-flow' });
+          const result = await service.embed(text);
+          const arr = new Float32Array(dims);
+          for (let i = 0; i < Math.min(dims, result.embedding.length); i++) {
+            arr[i] = result.embedding[i];
+          }
+          return { embedding: arr, source: 'onnx' };
+        }
+      } catch {
+        // agentic-flow not available
+      }
+
+      // Hash-based fallback (deterministic but not semantic)
+      const arr = new Float32Array(dims);
+      let seed = text.split('').reduce((acc, char, i) => acc + char.charCodeAt(0) * (i + 1), 0);
+      for (let i = 0; i < dims; i++) {
+        seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+        arr[i] = (seed / 0x7fffffff) * 2 - 1;
+      }
+      return { embedding: arr, source: 'hash-fallback' };
+    }
 
     if (mode === 'moe') {
       // Try MoE routing
       const moe = await getMoERouter();
       if (moe) {
         try {
-          // Generate a simple embedding from query (hash-based for demo)
-          const embedding = new Float32Array(384);
-          for (let i = 0; i < 384; i++) {
-            embedding[i] = Math.sin(query.charCodeAt(i % query.length) * (i + 1) * 0.01);
-          }
+          const embResult = await getQueryEmbedding(query, 384);
+          embeddingSource = embResult.source;
 
-          const routingResult = moe.route(embedding);
+          const routingResult = moe.route(embResult.embedding);
           for (let i = 0; i < Math.min(topK, routingResult.experts.length); i++) {
             const expert = routingResult.experts[i];
             results.push({
@@ -2975,14 +3017,11 @@ export const hooksIntelligenceAttention: MCPTool = {
       const flash = await getFlashAttention();
       if (flash) {
         try {
-          // Generate query/key/value embeddings
-          const q = new Float32Array(384);
+          const embResult = await getQueryEmbedding(query, 384);
+          embeddingSource = embResult.source;
+          const q = embResult.embedding;
           const keys: Float32Array[] = [];
           const values: Float32Array[] = [];
-
-          for (let i = 0; i < 384; i++) {
-            q[i] = Math.sin(query.charCodeAt(i % query.length) * (i + 1) * 0.01);
-          }
 
           // Generate some keys/values
           for (let k = 0; k < topK; k++) {
@@ -3029,10 +3068,13 @@ export const hooksIntelligenceAttention: MCPTool = {
       results,
       stats: {
         computeTimeMs,
-        speedup: implementation.startsWith('real-') ? (mode === 'flash' ? '2.49x-7.47x' : '1.5x-3x') : null,
-        memoryReduction: implementation.startsWith('real-') ? (mode === 'flash' ? '50-75%' : '25-40%') : null,
+        implementation,
+        _embeddingSource: embeddingSource,
         _stub: implementation === 'none',
         _note: implementation === 'none' ? 'No attention backend available. Install @ruvector/attention for real computation.' : undefined,
+        ...(embeddingSource === 'hash-fallback' && implementation !== 'none'
+          ? { _embeddingNote: 'Query embeddings are hash-based (not semantic). Install @claude-flow/embeddings for real ONNX embeddings.' }
+          : {}),
       },
       implementation,
     };

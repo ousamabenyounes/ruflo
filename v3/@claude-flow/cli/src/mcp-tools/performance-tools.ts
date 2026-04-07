@@ -279,15 +279,15 @@ export const performanceTools: MCPTool[] = [
       const iterations = (input.iterations as number) || 100;
       const warmup = input.warmup !== false;
 
-      // REAL benchmark functions
+      // Synthetic data benchmarks — measures actual CPU/memory throughput
       const benchmarkFunctions: Record<string, () => void> = {
         memory: () => {
-          // Real memory allocation benchmark
+          // Synthetic data benchmark — measures actual allocation + sort throughput
           const arr = new Array(1000).fill(0).map(() => Math.random());
           arr.sort();
         },
         neural: () => {
-          // Real computation benchmark (matrix-like operations)
+          // Synthetic data benchmark — measures actual matrix multiplication throughput
           const size = 64;
           const a = Array.from({ length: size }, () => Array.from({ length: size }, () => Math.random()));
           const b = Array.from({ length: size }, () => Array.from({ length: size }, () => Math.random()));
@@ -300,20 +300,20 @@ export const performanceTools: MCPTool[] = [
           }
         },
         swarm: () => {
-          // Real object creation and manipulation
+          // Synthetic data benchmark — measures actual object creation + manipulation throughput
           const agents = Array.from({ length: 10 }, (_, i) => ({ id: i, status: 'active', tasks: [] as number[] }));
           agents.forEach(a => { for (let i = 0; i < 100; i++) a.tasks.push(i); });
           agents.sort((a, b) => a.tasks.length - b.tasks.length);
         },
         io: () => {
-          // Real JSON serialization benchmark
+          // Synthetic data benchmark — measures actual JSON serialization throughput
           const data = { agents: Array.from({ length: 50 }, (_, i) => ({ id: i, name: `agent-${i}` })) };
           const json = JSON.stringify(data);
           JSON.parse(json);
         },
       };
 
-      const results: Array<{ name: string; opsPerSec: number; avgLatency: string; memoryUsage: string; _real: boolean }> = [];
+      const results: Array<{ name: string; opsPerSec: number; avgLatency: string; memoryUsage: string; _real: boolean; _dataSource: 'synthetic' }> = [];
       const suitesToRun = suite === 'all' ? Object.keys(benchmarkFunctions) : [suite];
 
       // Warmup phase
@@ -363,6 +363,7 @@ export const performanceTools: MCPTool[] = [
             avgLatency: `${avgLatencyMs.toFixed(3)}ms`,
             memoryUsage: `${Math.abs(memoryDelta)}KB`,
             _real: true,
+            _dataSource: 'synthetic' as const,
           });
         }
       }
@@ -384,6 +385,7 @@ export const performanceTools: MCPTool[] = [
 
       return {
         _real: true,
+        _note: 'Benchmarks use synthetic workloads to measure throughput. Results reflect actual CPU/memory performance.',
         suite,
         iterations,
         warmup,

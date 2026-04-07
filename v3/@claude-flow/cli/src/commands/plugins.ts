@@ -139,11 +139,13 @@ const listCommand: Command = {
 
       // Fetch real ratings from Cloud Function (non-blocking)
       let realRatings: Record<string, { average: number; count: number }> = {};
+      let ratingsSource: 'live' | 'cached' | 'unavailable' = 'live';
       try {
         const pluginIds = plugins.map(p => p.name);
         realRatings = await getBulkRatings(pluginIds, 'plugin');
       } catch {
         // Fall back to static ratings if Cloud Function unavailable
+        ratingsSource = 'unavailable';
       }
 
       if (ctx.flags.format === 'json') {
@@ -152,6 +154,7 @@ const listCommand: Command = {
           ...p,
           rating: realRatings[p.name]?.average || p.rating,
           ratingCount: realRatings[p.name]?.count || 0,
+          ...(ratingsSource === 'unavailable' ? { ratingsSource: 'cached' as const } : {}),
         }));
         output.printJson(pluginsWithRatings);
         return { success: true, data: pluginsWithRatings };
@@ -185,6 +188,9 @@ const listCommand: Command = {
       });
 
       output.writeln();
+      if (ratingsSource === 'unavailable') {
+        output.writeln(output.dim('(ratings: cached — cloud unavailable)'));
+      }
       output.writeln(output.dim(`Source: ${result.source}${result.fromCache ? ' (cached)' : ''}`));
       if (result.cid) {
         output.writeln(output.dim(`Registry CID: ${result.cid.slice(0, 30)}...`));

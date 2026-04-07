@@ -28,7 +28,7 @@ try {
     embeddingServiceName = 'agentic-flow/reasoningbank';
   }
 
-  // Tier 2: @claude-flow/embeddings
+  // Tier 2: @claude-flow/embeddings with agentic-flow provider
   if (!realEmbeddings) {
     const embeddingsModule = await import('@claude-flow/embeddings').catch(() => null);
     if (embeddingsModule?.createEmbeddingService) {
@@ -42,6 +42,35 @@ try {
         };
         embeddingServiceName = 'agentic-flow';
       } catch {
+        // agentic-flow provider not available, try ONNX
+      }
+    }
+  }
+
+  // Tier 3: @claude-flow/embeddings with ONNX provider
+  if (!realEmbeddings) {
+    const embeddingsModule = await import('@claude-flow/embeddings').catch(() => null);
+    if (embeddingsModule?.createEmbeddingService) {
+      try {
+        const service = embeddingsModule.createEmbeddingService({ provider: 'onnx' });
+        realEmbeddings = {
+          embed: async (text: string) => {
+            const result = await service.embed(text);
+            return Array.from(result.embedding);
+          },
+        };
+        embeddingServiceName = 'onnx';
+      } catch {
+        // ONNX provider not available, fall through to mock
+      }
+    }
+  }
+
+  // Tier 4: mock fallback (last resort — embeddings are not semantic)
+  if (!realEmbeddings) {
+    const embeddingsModule = await import('@claude-flow/embeddings').catch(() => null);
+    if (embeddingsModule?.createEmbeddingService) {
+      try {
         const service = embeddingsModule.createEmbeddingService({ provider: 'mock' });
         realEmbeddings = {
           embed: async (text: string) => {
@@ -49,7 +78,9 @@ try {
             return Array.from(result.embedding);
           },
         };
-        embeddingServiceName = 'mock';
+        embeddingServiceName = 'mock-fallback';
+      } catch {
+        // No embedding service available at all
       }
     }
   }
@@ -247,6 +278,7 @@ export const neuralTools: MCPTool[] = [
       return {
         success: true,
         _realEmbedding: !!realEmbeddings,
+        embeddingProvider: embeddingServiceName,
         modelId,
         type: modelType,
         status: model.status,
@@ -313,6 +345,7 @@ export const neuralTools: MCPTool[] = [
       return {
         success: true,
         _realEmbedding: !!realEmbeddings,
+        embeddingProvider: embeddingServiceName,
         _hasStoredPatterns: storedPatterns.length > 0,
         modelId: model?.id || 'default',
         input: inputText,
@@ -395,6 +428,7 @@ export const neuralTools: MCPTool[] = [
         return {
           success: true,
           _realEmbedding: !!realEmbeddings,
+          embeddingProvider: embeddingServiceName,
           patternId,
           name: pattern.name,
           type: pattern.type,
@@ -421,6 +455,7 @@ export const neuralTools: MCPTool[] = [
         return {
           _realSimilarity: true,
           _realEmbedding: !!realEmbeddings,
+          embeddingProvider: embeddingServiceName,
           query,
           results: results.map(r => ({
             id: r.id,
@@ -492,6 +527,7 @@ export const neuralTools: MCPTool[] = [
           saveNeuralStore(store);
           return {
             success: true, _real: true, method,
+            embeddingProvider: embeddingServiceName,
             patternsCompressed: totalCompressed,
             compressionRatio: '3.92x (Int8)',
             beforeBytes: beforeSize,
@@ -513,6 +549,7 @@ export const neuralTools: MCPTool[] = [
         saveNeuralStore(store);
         return {
           success: true, _real: true, method,
+          embeddingProvider: embeddingServiceName,
           threshold,
           patternsRemoved: toRemove.length,
           patternsBefore: beforeCount,
@@ -545,6 +582,7 @@ export const neuralTools: MCPTool[] = [
         saveNeuralStore(store);
         return {
           success: true, _real: true, method,
+          embeddingProvider: embeddingServiceName,
           patternsMerged: merged.length,
           patternsBefore: beforeCount,
           patternsAfter: Object.keys(store.patterns).length,
@@ -703,6 +741,7 @@ export const neuralTools: MCPTool[] = [
 
       return {
         success: true, _real: true, target,
+        embeddingProvider: embeddingServiceName,
         actions,
         patternsBefore: beforeCount,
         patternsAfter: Object.keys(store.patterns).length,
