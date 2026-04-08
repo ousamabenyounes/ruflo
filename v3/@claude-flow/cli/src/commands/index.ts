@@ -115,6 +115,8 @@ async function loadCommand(name: string): Promise<Command | undefined> {
 // These are the most commonly used commands that need instant access
 // =============================================================================
 
+// PERF-03: Only import core commands synchronously (~10 most-used).
+// All other commands are lazy-loaded via commandLoaders on demand.
 import { initCommand } from './init.js';
 import { startCommand } from './start.js';
 import { statusCommand } from './status.js';
@@ -125,35 +127,8 @@ import { swarmCommand } from './swarm.js';
 import { memoryCommand } from './memory.js';
 import { mcpCommand } from './mcp.js';
 import { hooksCommand } from './hooks.js';
-import { daemonCommand } from './daemon.js';
-import { doctorCommand } from './doctor.js';
-import { embeddingsCommand } from './embeddings.js';
-import { neuralCommand } from './neural.js';
-import { performanceCommand } from './performance.js';
-import { securityCommand } from './security.js';
-import { ruvectorCommand } from './ruvector/index.js';
-import { hiveMindCommand } from './hive-mind.js';
-// Additional commands for categorized help display
-import { configCommand } from './config.js';
-import { completionsCommand } from './completions.js';
-import { migrateCommand } from './migrate.js';
-import { workflowCommand } from './workflow.js';
-import { analyzeCommand } from './analyze.js';
-import { routeCommand } from './route.js';
-import { progressCommand } from './progress.js';
-import { providersCommand } from './providers.js';
-import { pluginsCommand } from './plugins.js';
-import { deploymentCommand } from './deployment.js';
-import { claimsCommand } from './claims.js';
-import { issuesCommand } from './issues.js';
-import updateCommand from './update.js';
-import { processCommand } from './process.js';
-import { guidanceCommand } from './guidance.js';
-import { applianceCommand } from './appliance.js';
-import { cleanupCommand } from './cleanup.js';
-import { autopilotCommand } from './autopilot.js';
 
-// Pre-populate cache with core commands
+// Pre-populate cache with core commands only
 loadedCommands.set('init', initCommand);
 loadedCommands.set('start', startCommand);
 loadedCommands.set('status', statusCommand);
@@ -164,23 +139,12 @@ loadedCommands.set('swarm', swarmCommand);
 loadedCommands.set('memory', memoryCommand);
 loadedCommands.set('mcp', mcpCommand);
 loadedCommands.set('hooks', hooksCommand);
-loadedCommands.set('daemon', daemonCommand);
-loadedCommands.set('doctor', doctorCommand);
-loadedCommands.set('embeddings', embeddingsCommand);
-loadedCommands.set('neural', neuralCommand);
-loadedCommands.set('performance', performanceCommand);
-loadedCommands.set('security', securityCommand);
-loadedCommands.set('ruvector', ruvectorCommand);
-loadedCommands.set('hive-mind', hiveMindCommand);
-loadedCommands.set('guidance', guidanceCommand);
-loadedCommands.set('cleanup', cleanupCommand);
-loadedCommands.set('autopilot', autopilotCommand);
 
 // =============================================================================
 // Exports (maintain backwards compatibility)
 // =============================================================================
 
-// Export synchronously loaded commands
+// Export core commands (synchronous)
 export { initCommand } from './init.js';
 export { startCommand } from './start.js';
 export { statusCommand } from './status.js';
@@ -191,18 +155,6 @@ export { swarmCommand } from './swarm.js';
 export { memoryCommand } from './memory.js';
 export { mcpCommand } from './mcp.js';
 export { hooksCommand } from './hooks.js';
-export { daemonCommand } from './daemon.js';
-export { doctorCommand } from './doctor.js';
-export { embeddingsCommand } from './embeddings.js';
-export { neuralCommand } from './neural.js';
-export { performanceCommand } from './performance.js';
-export { securityCommand } from './security.js';
-export { ruvectorCommand } from './ruvector/index.js';
-export { hiveMindCommand } from './hive-mind.js';
-export { guidanceCommand } from './guidance.js';
-export { applianceCommand } from './appliance.js';
-export { cleanupCommand } from './cleanup.js';
-export { autopilotCommand } from './autopilot.js';
 
 // Lazy-loaded command re-exports (for backwards compatibility, but async-only)
 export async function getConfigCommand() { return loadCommand('config'); }
@@ -236,7 +188,7 @@ export async function getAutopilotCommand() { return loadCommand('autopilot'); }
  * Advanced commands loaded on-demand for faster startup
  */
 export const commands: Command[] = [
-  // Core commands (synchronously loaded)
+  // Core commands (synchronously loaded) — PERF-03
   initCommand,
   startCommand,
   statusCommand,
@@ -247,21 +199,11 @@ export const commands: Command[] = [
   memoryCommand,
   mcpCommand,
   hooksCommand,
-  daemonCommand,
-  doctorCommand,
-  embeddingsCommand,
-  neuralCommand,
-  performanceCommand,
-  securityCommand,
-  ruvectorCommand,
-  hiveMindCommand,
-  guidanceCommand,
-  cleanupCommand,
-  autopilotCommand,
 ];
 
 /**
- * Commands organized by category for help display
+ * Commands organized by category for help display (synchronous core only).
+ * @deprecated Use getCommandsByCategory() for full categorized listing.
  */
 export const commandsByCategory = {
   primary: [
@@ -276,41 +218,58 @@ export const commandsByCategory = {
     mcpCommand,
     hooksCommand,
   ],
-  advanced: [
-    neuralCommand,
-    securityCommand,
-    performanceCommand,
-    embeddingsCommand,
-    hiveMindCommand,
-    ruvectorCommand,
-    guidanceCommand,
-    autopilotCommand,
-  ],
-  utility: [
-    configCommand,
-    doctorCommand,
-    daemonCommand,
-    completionsCommand,
-    migrateCommand,
-    workflowCommand,
-  ],
-  analysis: [
-    analyzeCommand,
-    routeCommand,
-    progressCommand,
-  ],
-  management: [
-    providersCommand,
-    pluginsCommand,
-    deploymentCommand,
-    claimsCommand,
-    issuesCommand,
-    updateCommand,
-    processCommand,
-    applianceCommand,
-    cleanupCommand,
-  ],
+  advanced: [] as Command[],
+  utility: [] as Command[],
+  analysis: [] as Command[],
+  management: [] as Command[],
 };
+
+/**
+ * Async version that loads all commands by category (PERF-03).
+ * Use this for help display and full command listings.
+ */
+export async function getCommandsByCategory(): Promise<Record<string, Command[]>> {
+  const [
+    daemonCmd, doctorCmd, embeddingsCmd, neuralCmd,
+    performanceCmd, securityCmd, ruvectorCmd, hiveMindCmd,
+    configCmd, completionsCmd, migrateCmd, workflowCmd,
+    analyzeCmd, routeCmd, progressCmd, providersCmd,
+    pluginsCmd, deploymentCmd, claimsCmd, issuesCmd,
+    updateCmd, processCmd, guidanceCmd, applianceCmd,
+    cleanupCmd, autopilotCmd,
+  ] = await Promise.all([
+    loadCommand('daemon'), loadCommand('doctor'), loadCommand('embeddings'), loadCommand('neural'),
+    loadCommand('performance'), loadCommand('security'), loadCommand('ruvector'), loadCommand('hive-mind'),
+    loadCommand('config'), loadCommand('completions'), loadCommand('migrate'), loadCommand('workflow'),
+    loadCommand('analyze'), loadCommand('route'), loadCommand('progress'), loadCommand('providers'),
+    loadCommand('plugins'), loadCommand('deployment'), loadCommand('claims'), loadCommand('issues'),
+    loadCommand('update'), loadCommand('process'), loadCommand('guidance'), loadCommand('appliance'),
+    loadCommand('cleanup'), loadCommand('autopilot'),
+  ]);
+
+  return {
+    primary: [
+      initCommand, startCommand, statusCommand, agentCommand,
+      swarmCommand, memoryCommand, taskCommand, sessionCommand,
+      mcpCommand, hooksCommand,
+    ],
+    advanced: [
+      neuralCmd, securityCmd, performanceCmd, embeddingsCmd,
+      hiveMindCmd, ruvectorCmd, guidanceCmd, autopilotCmd,
+    ].filter(Boolean) as Command[],
+    utility: [
+      configCmd, doctorCmd, daemonCmd, completionsCmd,
+      migrateCmd, workflowCmd,
+    ].filter(Boolean) as Command[],
+    analysis: [
+      analyzeCmd, routeCmd, progressCmd,
+    ].filter(Boolean) as Command[],
+    management: [
+      providersCmd, pluginsCmd, deploymentCmd, claimsCmd,
+      issuesCmd, updateCmd, processCmd, applianceCmd, cleanupCmd,
+    ].filter(Boolean) as Command[],
+  };
+}
 
 /**
  * Command registry map for quick lookup

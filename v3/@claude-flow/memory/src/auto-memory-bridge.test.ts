@@ -105,14 +105,21 @@ describe('resolveAutoMemoryDir', () => {
 
 describe('findGitRoot', () => {
   it('should find git root for a directory inside a repo', () => {
-    // We know /workspaces/claude-flow is a git repo
-    const root = findGitRoot('/workspaces/claude-flow/v3/@claude-flow/memory');
-    expect(root).toBe('/workspaces/claude-flow');
+    // Use the actual repo path (works regardless of workspace name)
+    const thisDir = path.resolve(__dirname);
+    const root = findGitRoot(thisDir);
+    expect(root).not.toBeNull();
+    // The root should contain a .git directory
+    expect(fsSync.existsSync(path.join(root!, '.git'))).toBe(true);
   });
 
   it('should return the directory itself if it is the git root', () => {
-    const root = findGitRoot('/workspaces/claude-flow');
-    expect(root).toBe('/workspaces/claude-flow');
+    // Find the actual git root first, then verify idempotence
+    const thisDir = path.resolve(__dirname);
+    const gitRoot = findGitRoot(thisDir);
+    expect(gitRoot).not.toBeNull();
+    const root = findGitRoot(gitRoot!);
+    expect(root).toBe(gitRoot);
   });
 
   it('should return null for root filesystem', () => {

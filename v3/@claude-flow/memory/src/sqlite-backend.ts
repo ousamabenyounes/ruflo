@@ -10,6 +10,7 @@
 
 import { EventEmitter } from 'node:events';
 import Database from 'better-sqlite3';
+import { safeJsonParse } from './json-security.js';
 import {
   IMemoryBackend,
   MemoryEntry,
@@ -674,15 +675,15 @@ export class SQLiteBackend extends EventEmitter implements IMemoryBackend {
       embedding,
       type: row.type as MemoryType,
       namespace: row.namespace,
-      tags: JSON.parse(row.tags),
-      metadata: JSON.parse(row.metadata),
+      tags: safeJsonParse<string[]>(row.tags || '[]'),
+      metadata: safeJsonParse<Record<string, unknown>>(row.metadata || '{}'),
       ownerId: row.owner_id,
       accessLevel: row.access_level,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       expiresAt: row.expires_at,
       version: row.version,
-      references: JSON.parse(row.references),
+      references: safeJsonParse<string[]>(row.references || '[]'),
       accessCount: row.access_count,
       lastAccessedAt: row.last_accessed_at,
     };

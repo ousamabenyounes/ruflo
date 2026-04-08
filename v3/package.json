@@ -43,7 +43,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@vitest/coverage-v8": "^4.0.16",
-    "typescript": "^5.3.0",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.16"
   },
   "engines": {
@@ -55,7 +55,9 @@
     "semantic-release": "25.0.2"
   },
   "pnpm": {
-    "neverBuiltDependencies": ["sharp"],
+    "neverBuiltDependencies": [
+      "sharp"
+    ],
     "overrides": {
       "@ruvector/gnn": "0.1.25",
       "@ruvector/gnn-linux-x64-gnu": "0.1.25"

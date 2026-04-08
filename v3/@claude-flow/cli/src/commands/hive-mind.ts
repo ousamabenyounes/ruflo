@@ -259,7 +259,7 @@ async function spawnClaudeCodeInstance(
       }
 
       // Add auto-permission flag unless explicitly disabled
-      const skipPermissions = flags['dangerously-skip-permissions'] !== false && !flags['no-auto-permissions'];
+      const skipPermissions = flags['dangerously-skip-permissions'] === true && !flags['no-auto-permissions'];
       if (skipPermissions) {
         claudeArgs.push('--dangerously-skip-permissions');
         if (!isNonInteractive) {

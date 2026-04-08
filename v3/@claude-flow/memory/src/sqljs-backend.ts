@@ -10,6 +10,7 @@
 import { EventEmitter } from 'node:events';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import initSqlJs, { Database as SqlJsDatabase } from 'sql.js';
+import { safeJsonParse } from './json-security.js';
 import {
   IMemoryBackend,
   MemoryEntry,
@@ -717,15 +718,15 @@ export class SqlJsBackend extends EventEmitter implements IMemoryBackend {
         : undefined,
       type: row.type as MemoryType,
       namespace: row.namespace as string,
-      tags: JSON.parse(row.tags as string),
-      metadata: JSON.parse(row.metadata as string),
+      tags: safeJsonParse<string[]>((row.tags as string) || '[]'),
+      metadata: safeJsonParse<Record<string, unknown>>((row.metadata as string) || '{}'),
       ownerId: row.owner_id as string | undefined,
       accessLevel: row.access_level as any,
       createdAt: row.created_at as number,
       updatedAt: row.updated_at as number,
       expiresAt: row.expires_at as number | undefined,
       version: row.version as number,
-      references: JSON.parse(row.references as string),
+      references: safeJsonParse<string[]>((row.references as string) || '[]'),
       accessCount: row.access_count as number,
       lastAccessedAt: row.last_accessed_at as number,
     };

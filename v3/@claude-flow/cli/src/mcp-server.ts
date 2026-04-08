@@ -711,12 +711,27 @@ export class MCPServerManager extends EventEmitter {
     }
 
     // Verify it's actually a node process (guards against PID reuse)
+    // DA-CRIT-3: Use execFileSync to prevent command injection via PID values
     try {
-      const { execSync } = require('child_process') as typeof import('child_process');
-      const cmdline = execSync(`cat /proc/${pid}/cmdline 2>/dev/null || ps -p ${pid} -o comm= 2>/dev/null`, {
-        encoding: 'utf8',
-        timeout: 1000,
-      }).trim();
+      const { execFileSync } = require('child_process') as typeof import('child_process');
+      const safePid = String(Math.floor(Math.abs(pid)));
+      let cmdline = '';
+      try {
+        // Try /proc on Linux
+        const { readFileSync } = require('fs') as typeof import('fs');
+        cmdline = readFileSync(`/proc/${safePid}/cmdline`, 'utf8');
+      } catch {
+        // Fall back to ps on macOS/other
+        try {
+          cmdline = execFileSync('ps', ['-p', safePid, '-o', 'comm='], {
+            encoding: 'utf8',
+            timeout: 1000,
+          }).trim();
+        } catch {
+          // ps failed — fall through
+        }
+      }
+      if (!cmdline) return true; // Can't inspect, fall back to kill check
       // Must be a node process to be our MCP server
       return cmdline.includes('node') || cmdline.includes('claude-flow') || cmdline.includes('npx');
     } catch {

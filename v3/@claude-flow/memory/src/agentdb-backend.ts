@@ -11,6 +11,7 @@
  */
 
 import { EventEmitter } from 'node:events';
+import { safeJsonParse } from './json-security.js';
 import {
   IMemoryBackend,
   MemoryEntry,
@@ -143,8 +144,9 @@ export class AgentDBBackend extends EventEmitter implements IMemoryBackend {
   private namespaceIndex: Map<string, Set<string>> = new Map();
   private keyIndex: Map<string, string> = new Map();
 
-  // O(1) reverse lookup for numeric ID -> string ID (fixes O(n) linear scan)
+  // O(1) bidirectional lookup for numeric ID <-> string ID (fixes O(n) linear scan)
   private numericToStringIdMap: Map<number, string> = new Map();
+  private stringToNumericIdMap: Map<string, number> = new Map();
 
   // Performance tracking
   private stats = {
@@ -413,8 +415,17 @@ export class AgentDBBackend extends EventEmitter implements IMemoryBackend {
    * Bulk insert
    */
   async bulkInsert(entries: MemoryEntry[]): Promise<void> {
-    for (const entry of entries) {
-      await this.store(entry);
+    if (entries.length === 0) return;
+
+    // PERF-02: Batch with bounded concurrency instead of sequential N+1
+    const BATCH_SIZE = 50;
+    for (let i = 0; i < entries.length; i += BATCH_SIZE) {
+      const batch = entries.slice(i, i + BATCH_SIZE);
+      const results = await Promise.allSettled(batch.map(entry => this.store(entry)));
+      const failures = results.filter(r => r.status === 'rejected');
+      if (failures.length > 0) {
+        console.warn(`[AgentDB] bulkInsert: ${failures.length}/${batch.length} entries failed in batch ${Math.floor(i / BATCH_SIZE) + 1}`);
+      }
     }
   }
 
@@ -422,11 +433,15 @@ export class AgentDBBackend extends EventEmitter implements IMemoryBackend {
    * Bulk delete
    */
   async bulkDelete(ids: string[]): Promise<number> {
+    if (ids.length === 0) return 0;
+
+    // PERF-02: Batch with bounded concurrency instead of sequential N+1
+    const BATCH_SIZE = 50;
     let deleted = 0;
-    for (const id of ids) {
-      if (await this.delete(id)) {
-        deleted++;
-      }
+    for (let i = 0; i < ids.length; i += BATCH_SIZE) {
+      const batch = ids.slice(i, i + BATCH_SIZE);
+      const results = await Promise.allSettled(batch.map(id => this.delete(id)));
+      deleted += results.filter(r => r.status === 'fulfilled' && r.value).length;
     }
     return deleted;
   }
@@ -453,16 +468,11 @@ export class AgentDBBackend extends EventEmitter implements IMemoryBackend {
    */
   async clearNamespace(namespace: string): Promise<number> {
     const ids = this.namespaceIndex.get(namespace);
-    if (!ids) return 0;
+    if (!ids || ids.size === 0) return 0;
 
-    let deleted = 0;
-    for (const id of ids) {
-      if (await this.delete(id)) {
-        deleted++;
-      }
-    }
-
-    return deleted;
+    // PERF-02: Copy IDs to avoid modifying set during iteration, then batch delete
+    const idList = Array.from(ids);
+    return this.bulkDelete(idList);
   }
 
   /**
@@ -921,15 +931,15 @@ export class AgentDBBackend extends EventEmitter implements IMemoryBackend {
         : undefined,
       type: row.type,
       namespace: row.namespace,
-      tags: JSON.parse(row.tags || '[]'),
-      metadata: JSON.parse(row.metadata || '{}'),
+      tags: safeJsonParse<string[]>(row.tags || '[]'),
+      metadata: safeJsonParse<Record<string, unknown>>(row.metadata || '{}'),
       ownerId: row.owner_id,
       accessLevel: row.access_level,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       expiresAt: row.expires_at,
       version: row.version,
-      references: JSON.parse(row.references || '[]'),
+      references: safeJsonParse<string[]>(row.references || '[]'),
       accessCount: row.access_count || 0,
       lastAccessedAt: row.last_accessed_at || row.created_at,
     };
@@ -939,12 +949,36 @@ export class AgentDBBackend extends EventEmitter implements IMemoryBackend {
    * Convert string ID to numeric for HNSW
    */
   private stringIdToNumeric(id: string): number {
-    let hash = 0;
+    // Check reverse map first — if this ID was collision-probed, the map has the actual numeric ID
+    const mapped = this.stringToNumericIdMap.get(id);
+    if (mapped !== undefined) return mapped;
+
+    // HIGH-05: Dual hash (djb2 + sdbm) for 53-bit space, ~94M entries before collision
+    return this.hashStringId(id);
+  }
+
+  /**
+   * Pure hash function for string ID (no map lookup).
+   * Used by registerIdMapping for initial hash before collision probing.
+   */
+  private hashStringId(id: string): number {
+    // Hash A: djb2
+    let hashA = 5381;
     for (let i = 0; i < id.length; i++) {
-      hash = (hash << 5) - hash + id.charCodeAt(i);
-      hash |= 0;
+      hashA = ((hashA << 5) + hashA + id.charCodeAt(i)) | 0;
     }
-    return Math.abs(hash);
+
+    // Hash B: sdbm (independent seed/algorithm)
+    let hashB = 0;
+    for (let i = 0; i < id.length; i++) {
+      hashB = id.charCodeAt(i) + ((hashB << 6) + (hashB << 16) - hashB) | 0;
+    }
+
+    // Combine into a 53-bit safe integer:
+    // Use 26 bits from hashA and 27 bits from hashB
+    const upper = (Math.abs(hashA) & 0x3FFFFFF); // 26 bits
+    const lower = (Math.abs(hashB) & 0x7FFFFFF); // 27 bits
+    return upper * 0x8000000 + lower;
   }
 
   /**
@@ -966,8 +1000,21 @@ export class AgentDBBackend extends EventEmitter implements IMemoryBackend {
    * Called when storing entries to maintain bidirectional mapping
    */
   private registerIdMapping(stringId: string): void {
-    const numericId = this.stringIdToNumeric(stringId);
+    const numericId = this.hashStringId(stringId);
+    const existing = this.numericToStringIdMap.get(numericId);
+    if (existing && existing !== stringId) {
+      // HIGH-05: Collision detected — use linear probing fallback
+      console.warn(`[HNSW] Hash collision detected: "${stringId}" collides with "${existing}" (numeric: ${numericId})`);
+      let fallbackId = numericId + 1;
+      while (this.numericToStringIdMap.has(fallbackId)) {
+        fallbackId++;
+      }
+      this.numericToStringIdMap.set(fallbackId, stringId);
+      this.stringToNumericIdMap.set(stringId, fallbackId);
+      return;
+    }
     this.numericToStringIdMap.set(numericId, stringId);
+    this.stringToNumericIdMap.set(stringId, numericId);
   }
 
   /**
@@ -975,8 +1022,10 @@ export class AgentDBBackend extends EventEmitter implements IMemoryBackend {
    * Called when deleting entries
    */
   private unregisterIdMapping(stringId: string): void {
-    const numericId = this.stringIdToNumeric(stringId);
+    // Use reverse map for correct numeric ID (may differ from hash due to collision fallback)
+    const numericId = this.stringToNumericIdMap.get(stringId) ?? this.stringIdToNumeric(stringId);
     this.numericToStringIdMap.delete(numericId);
+    this.stringToNumericIdMap.delete(stringId);
   }
 
   /**

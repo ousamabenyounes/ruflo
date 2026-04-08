@@ -391,15 +391,24 @@ const initAction = async (ctx: CommandContext): Promise<CommandResult> => {
       output.writeln();
       output.printInfo('Initializing ONNX embedding subsystem...');
 
-      const { execSync } = await import('child_process');
+      const { execFileSync: execFileInit } = await import('child_process');
+
+      // Validate embeddingModel: must match pattern org/model-name (CRIT-02)
+      if (!/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9._-]+$/.test(embeddingModel)) {
+        throw new Error(`Invalid embedding model name: ${embeddingModel}`);
+      }
 
       try {
         output.writeln(output.dim(`  Model: ${embeddingModel}`));
         output.writeln(output.dim('  Hyperbolic: Enabled (Poincaré ball)'));
-        execSync(`npx @claude-flow/cli@latest embeddings init --model ${embeddingModel} --no-download --force 2>/dev/null`, {
+        execFileInit('npx', [
+          '@claude-flow/cli@latest', 'embeddings', 'init',
+          '--model', embeddingModel,
+          '--no-download', '--force',
+        ], {
           stdio: 'pipe',
           cwd: ctx.cwd,
-          timeout: 30000
+          timeout: 30000,
         });
         output.writeln(output.success('  ✓ Embeddings initialized'));
         output.writeln(output.dim('    Run "embeddings init --download" to download model'));
@@ -639,12 +648,22 @@ const wizardCommand: Command = {
       if (enableEmbeddings) {
         output.writeln();
         output.printInfo('Initializing ONNX embedding subsystem...');
-        const { execSync } = await import('child_process');
+        const { execFileSync } = await import('child_process');
+
+        // Validate embeddingModel: must match pattern org/model-name (CRIT-02)
+        if (!/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9._-]+$/.test(embeddingModel)) {
+          throw new Error(`Invalid embedding model name: ${embeddingModel}`);
+        }
+
         try {
-          execSync(`npx @claude-flow/cli@latest embeddings init --model ${embeddingModel} --no-download --force 2>/dev/null`, {
+          execFileSync('npx', [
+            '@claude-flow/cli@latest', 'embeddings', 'init',
+            '--model', embeddingModel,
+            '--no-download', '--force',
+          ], {
             stdio: 'pipe',
             cwd: ctx.cwd,
-            timeout: 30000
+            timeout: 30000,
           });
           output.writeln(output.success('  ✓ Embeddings configured'));
           embeddingsInitialized = true;

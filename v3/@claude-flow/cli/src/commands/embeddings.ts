@@ -169,69 +169,97 @@ const searchCommand: Command = {
       const queryEmbedding = queryResult.embedding;
 
       // Get all entries with embeddings from database
-      const entries = db.exec(`
-        SELECT id, key, namespace, content, embedding, embedding_dimensions
-        FROM memory_entries
-        WHERE status = 'active'
-          AND embedding IS NOT NULL
-          ${namespace !== 'all' ? `AND namespace = '${namespace}'` : ''}
-        LIMIT 1000
-      `);
+      // Parameterized query to prevent SQL injection (CRIT-01)
+      const embeddingSql = namespace !== 'all'
+        ? `SELECT id, key, namespace, content, embedding, embedding_dimensions
+           FROM memory_entries
+           WHERE status = 'active' AND embedding IS NOT NULL AND namespace = ?
+           LIMIT 1000`
+        : `SELECT id, key, namespace, content, embedding, embedding_dimensions
+           FROM memory_entries
+           WHERE status = 'active' AND embedding IS NOT NULL
+           LIMIT 1000`;
+
+      const embeddingStmt = db.prepare(embeddingSql);
+      if (namespace !== 'all') {
+        embeddingStmt.bind([namespace]);
+      }
+
+      const entryRows: any[][] = [];
+      while (embeddingStmt.step()) {
+        entryRows.push(embeddingStmt.get());
+      }
+      embeddingStmt.free();
 
       const results: { score: number; id: string; key: string; content: string; namespace: string }[] = [];
 
-      if (entries[0]?.values) {
-        for (const row of entries[0].values) {
-          const [id, key, ns, content, embeddingJson] = row as [string, string, string, string, string];
+      for (const row of entryRows) {
+        const [id, key, ns, content, embeddingJson] = row as [string, string, string, string, string];
 
-          if (!embeddingJson) continue;
+        if (!embeddingJson) continue;
 
-          try {
-            const embedding = JSON.parse(embeddingJson) as number[];
+        try {
+          const embedding = JSON.parse(embeddingJson) as number[];
 
-            // Calculate cosine similarity
-            const similarity = cosineSimilarity(queryEmbedding, embedding);
+          // Calculate cosine similarity
+          const similarity = cosineSimilarity(queryEmbedding, embedding);
 
-            if (similarity >= threshold) {
-              results.push({
-                score: similarity,
-                id: id.substring(0, 10),
-                key: key || id.substring(0, 15),
-                content: (content || '').substring(0, 45) + ((content || '').length > 45 ? '...' : ''),
-                namespace: ns || 'default'
-              });
-            }
-          } catch {
-            // Skip entries with invalid embeddings
+          if (similarity >= threshold) {
+            results.push({
+              score: similarity,
+              id: id.substring(0, 10),
+              key: key || id.substring(0, 15),
+              content: (content || '').substring(0, 45) + ((content || '').length > 45 ? '...' : ''),
+              namespace: ns || 'default'
+            });
           }
+        } catch {
+          // Skip entries with invalid embeddings
         }
       }
 
-      // Also search entries without embeddings using keyword match
+      // Keyword search fallback with parameterized query (CRIT-01)
       if (results.length < limit) {
-        const keywordEntries = db.exec(`
-          SELECT id, key, namespace, content
-          FROM memory_entries
-          WHERE status = 'active'
-            AND (content LIKE '%${query.replace(/'/g, "''")}%' OR key LIKE '%${query.replace(/'/g, "''")}%')
-            ${namespace !== 'all' ? `AND namespace = '${namespace}'` : ''}
-          LIMIT ${limit - results.length}
-        `);
+        const likePattern = `%${query}%`;
+        const remainingLimit = Math.max(0, limit - results.length);
+        const keywordSql = namespace !== 'all'
+          ? `SELECT id, key, namespace, content
+             FROM memory_entries
+             WHERE status = 'active'
+               AND (content LIKE ? OR key LIKE ?)
+               AND namespace = ?
+             LIMIT ?`
+          : `SELECT id, key, namespace, content
+             FROM memory_entries
+             WHERE status = 'active'
+               AND (content LIKE ? OR key LIKE ?)
+             LIMIT ?`;
 
-        if (keywordEntries[0]?.values) {
-          for (const row of keywordEntries[0].values) {
-            const [id, key, ns, content] = row as [string, string, string, string];
+        const keywordStmt = db.prepare(keywordSql);
+        if (namespace !== 'all') {
+          keywordStmt.bind([likePattern, likePattern, namespace, remainingLimit]);
+        } else {
+          keywordStmt.bind([likePattern, likePattern, remainingLimit]);
+        }
 
-            // Avoid duplicates
-            if (!results.some(r => r.id === id.substring(0, 10))) {
-              results.push({
-                score: 0.5, // Keyword match base score
-                id: id.substring(0, 10),
-                key: key || id.substring(0, 15),
-                content: (content || '').substring(0, 45) + ((content || '').length > 45 ? '...' : ''),
-                namespace: ns || 'default'
-              });
-            }
+        const keywordRows: any[][] = [];
+        while (keywordStmt.step()) {
+          keywordRows.push(keywordStmt.get());
+        }
+        keywordStmt.free();
+
+        for (const row of keywordRows) {
+          const [id, key, ns, content] = row as [string, string, string, string];
+
+          // Avoid duplicates
+          if (!results.some(r => r.id === id.substring(0, 10))) {
+            results.push({
+              score: 0.5, // Keyword match base score
+              id: id.substring(0, 10),
+              key: key || id.substring(0, 15),
+              content: (content || '').substring(0, 45) + ((content || '').length > 45 ? '...' : ''),
+              namespace: ns || 'default'
+            });
           }
         }
       }

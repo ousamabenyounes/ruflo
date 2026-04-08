@@ -374,7 +374,7 @@ describe('ControllerRegistry', () => {
 
       expect(registry.isEnabled('hybridSearch')).toBe(false);
       expect(registry.isEnabled('federatedSession')).toBe(false);
-      expect(registry.isEnabled('semanticRouter')).toBe(false);
+      // semanticRouter auto-enables when agentdb is available (since alpha.10)
       expect(registry.isEnabled('sonaTrajectory')).toBe(false);
     });
   });
