@@ -72,7 +72,7 @@ const storeCommand: Command = {
   ],
   action: async (ctx: CommandContext): Promise<CommandResult> => {
     const key = ctx.flags.key as string;
-    let value = ctx.flags.value as string || ctx.args[0];
+    let value = ctx.flags.value != null ? String(ctx.flags.value) : ctx.args[0] as string;
     const namespace = ctx.flags.namespace as string;
     const ttl = ctx.flags.ttl as number;
     const tags = ctx.flags.tags ? (ctx.flags.tags as string).split(',') : [];
