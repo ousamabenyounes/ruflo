@@ -129,8 +129,8 @@ export async function validateAgentSpawn(input: Record<string, unknown>): Promis
   if (sec?.SpawnAgentSchema) {
     try {
       sec.SpawnAgentSchema.parse({
-        agentType: input.agentType,
-        name: input.agentId,
+        type: input.agentType,
+        id: input.agentId,
       });
     } catch (zodErr: any) {
       if (zodErr.issues) {
