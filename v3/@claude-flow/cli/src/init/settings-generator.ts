@@ -344,7 +344,7 @@ function generateHooksConfig(config: HooksConfig): object {
           {
             type: 'command',
             command: hookHandlerCmd('session-end'),
-            timeout: 5000,
+            timeout: 10000,
           },
         ],
       },
@@ -386,7 +386,7 @@ function generateHooksConfig(config: HooksConfig): object {
         {
           type: 'command',
           command: hookHandlerCmd('post-task'),
-          timeout: 5000,
+          timeout: 10000,
         },
       ],
     },
