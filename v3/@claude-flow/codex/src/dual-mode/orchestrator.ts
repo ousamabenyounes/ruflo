@@ -64,7 +64,7 @@ export class DualModeOrchestrator extends EventEmitter {
       sharedNamespace: config.sharedNamespace ?? 'collaboration',
       timeout: config.timeout ?? 300000, // 5 minutes
       claudeCommand: config.claudeCommand ?? 'claude',
-      codexCommand: config.codexCommand ?? 'claude', // Both use claude CLI
+      codexCommand: config.codexCommand ?? 'codex',
     };
   }
 
@@ -142,17 +142,23 @@ export class DualModeOrchestrator extends EventEmitter {
     // Build the prompt with memory integration
     const enhancedPrompt = this.buildCollaborativePrompt(config);
 
-    const args = [
-      '-p', enhancedPrompt,
-      '--output-format', 'text',
-    ];
-
-    if (config.maxTurns) {
-      args.push('--max-turns', String(config.maxTurns));
-    }
-
-    if (config.model) {
-      args.push('--model', config.model);
+    // Build platform-specific args
+    const args: string[] = [];
+    if (config.platform === 'codex') {
+      // Codex CLI: codex -q "prompt" [--model model]
+      args.push('-q', enhancedPrompt);
+      if (config.model) {
+        args.push('--model', config.model);
+      }
+    } else {
+      // Claude CLI: claude -p "prompt" --output-format text [--max-turns N] [--model model]
+      args.push('-p', enhancedPrompt, '--output-format', 'text');
+      if (config.maxTurns) {
+        args.push('--max-turns', String(config.maxTurns));
+      }
+      if (config.model) {
+        args.push('--model', config.model);
+      }
     }
 
     return new Promise((resolve, reject) => {
