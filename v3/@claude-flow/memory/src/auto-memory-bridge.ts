@@ -486,6 +486,12 @@ export class AutoMemoryBridge extends EventEmitter {
         .filter((cat) => sections[cat]);
     }
 
+    // If no topic files matched, leave existing MEMORY.md untouched.
+    // Writing an empty index would destroy any hand-curated content.
+    if (Object.keys(sections).length === 0) {
+      return;
+    }
+
     // Prune sections before building the index to avoid O(n^2) rebuild loop
     const budget = this.config.maxIndexLines;
     pruneSectionsToFit(sections, budget, this.config.pruneStrategy);
