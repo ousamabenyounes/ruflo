@@ -1636,13 +1636,25 @@ describe('memory_store undefined value guard (#1032)', () => {
     expect(result.error).toContain('Missing required parameter: value (cannot be null or undefined)');
   });
 
-  it('should not crash and should include key in error response', async () => {
+  it('should not crash and should include full error payload', async () => {
     const { memoryTools } = await import('../src/mcp-tools/memory-tools.js');
     const tool = memoryTools.find(t => t.name === 'memory_store')!;
 
     const result: any = await tool.handler({ key: 'my-key', value: undefined });
     expect(result.success).toBe(false);
     expect(result.key).toBe('my-key');
+    expect(result.namespace).toBe('default');
     expect(result.stored).toBe(false);
+    expect(result.hasEmbedding).toBe(false);
+  });
+
+  it('should return error when value is empty string', async () => {
+    const { memoryTools } = await import('../src/mcp-tools/memory-tools.js');
+    const tool = memoryTools.find(t => t.name === 'memory_store')!;
+
+    const result: any = await tool.handler({ key: 'empty-key', value: '' });
+    expect(result.success).toBe(false);
+    expect(result.stored).toBe(false);
+    expect(result.error).toContain('Value is required');
   });
 });
